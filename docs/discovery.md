@@ -70,6 +70,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Unsupported cursor format versions fail explicitly, including when a cursor spans an application upgrade.
 - Cursors fail explicitly when their dataset generation is stale or their query identity does not match the request.
 - Sources with static lifecycle data, such as loaded mods, may retain one generation for the process lifetime.
+- Revisit generation ownership before adding reloadable datasets; services should follow one consistent generation pattern where practical.
 - The first recipe operation should find recipes that produce a specified item.
 - Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
 - Initial recipe results will not include raw serialized recipes.
