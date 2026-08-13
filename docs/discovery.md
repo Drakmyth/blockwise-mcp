@@ -36,6 +36,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 
 ## Provisional direction
 
+- Query live Minecraft managers initially; add snapshots only if measurement justifies their startup and lifecycle cost.
 - Prefer embedding the MCP server in the Minecraft process to couple its lifecycle to the game and minimize user setup.
 - Keep the game-data interface sufficiently isolated that a separate MCP process could be introduced later.
 - Favor stable external contracts with loader- and Minecraft-version-specific adapters over attempting a single cross-version binary.
@@ -47,6 +48,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Client-only access may be incomplete or misleading in multiplayer because authoritative data can reside on the server.
 - An embedded server shares Minecraft's JVM, dependency environment, failure domain, and resource limits.
 - MCP requests must not access game state from unsafe threads or block the game tick for unbounded periods.
+- Live-manager queries avoid snapshot startup costs but require thread-safe access and may not provide consistency across multiple requests.
 - Local network transport still requires careful interface binding and endpoint lifecycle handling.
 - A publicly reachable endpoint could expose mod versions, configuration, hidden content, or server internals and could enable resource-exhaustion attacks.
 - Modded recipes may contain dynamic or custom ingredients and outputs that cannot be represented losslessly by one normalized universal schema.
