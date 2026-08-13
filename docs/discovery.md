@@ -1,6 +1,6 @@
 # Project Discovery
 
-This document records product discovery for Minecraft Registry MCP. It distinguishes accepted direction from provisional choices and unresolved questions. It is not an implementation specification.
+This document records product discovery for Blockwise MCP. It distinguishes accepted direction from provisional choices and unresolved questions. It is not an implementation specification.
 
 ## Product goal
 
