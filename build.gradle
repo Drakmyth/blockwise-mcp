@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    group = 'com.drakmyth.minecraft.blockwise'
+    group = 'com.drakmyth.minecraft.blockwisemcp'
     version = '0.1.0-SNAPSHOT'
 }
 

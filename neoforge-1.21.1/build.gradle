@@ -4,7 +4,7 @@ plugins {
 }
 
 base {
-    archivesName = 'blockwise-neoforge-${minecraft_version}'
+    archivesName = 'blockwise-mcp-neoforge-${minecraft_version}'
 }
 
 neoForge {
@@ -22,12 +22,12 @@ neoForge {
 
         gameTestServer {
             type = 'gameTestServer'
-            systemProperty 'neoforge.enabledGameTestNamespaces', 'blockwise'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'blockwisemcp'
         }
     }
 
     mods {
-        blockwise {
+        blockwisemcp {
             sourceSet sourceSets.main
         }
     }

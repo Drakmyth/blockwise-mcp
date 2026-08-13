@@ -4,7 +4,7 @@ license="MIT"
 issueTrackerURL="https://github.com/Drakmyth/blockwise-mcp/issues"
 
 [[mods]]
-modId="blockwise"
+modId="blockwisemcp"
 version="${mod_version}"
 displayName="Blockwise MCP"
 displayURL="https://github.com/Drakmyth/blockwise-mcp"
@@ -13,14 +13,14 @@ description='''
 An unofficial MCP server for querying runtime data from modded Minecraft.
 '''
 
-[[dependencies.blockwise]]
+[[dependencies.blockwisemcp]]
 modId="neoforge"
 type="required"
 versionRange="[${neo_version},)"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies.blockwise]]
+[[dependencies.blockwisemcp]]
 modId="minecraft"
 type="required"
 versionRange="${minecraft_version_range}"

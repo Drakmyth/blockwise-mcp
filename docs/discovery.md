@@ -12,7 +12,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 
 - The project will use the MIT license.
 - Java 21 is the project baseline for all modules running inside Minecraft.
-- The base Java package and Maven group are `com.drakmyth.minecraft.blockwise`; the owner controls `drakmyth.com`.
+- The base Java package and Maven group are `com.drakmyth.minecraft.blockwisemcp`; the owner controls `drakmyth.com`.
 - Keep root Gradle configuration loader-neutral.
 - Use NeoForge's official Minecraft 1.21.1 ModDevGradle template only as a reference for an isolated NeoForge module.
 - Pin exact Gradle, ModDevGradle, and NeoForge versions; update them explicitly.
@@ -91,7 +91,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 ## Open questions
 
 - Confirm that `Blockwise MCP` is sufficiently available and compliant with Minecraft branding guidelines.
-- The mod ID is `blockwise`.
+- The mod ID is `blockwisemcp`; repository and artifact names use `blockwise-mcp`.
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
 - Which semantics must the recipe contract support before its first release?

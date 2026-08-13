@@ -1,4 +1,4 @@
-package com.drakmyth.minecraft.blockwise;
+package com.drakmyth.minecraft.blockwisemcp;
 
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
