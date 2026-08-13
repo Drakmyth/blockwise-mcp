@@ -21,6 +21,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The highest-value initial data categories are:
   1. Loaded mods
   2. Recipes
+- Expose focused, single-purpose MCP tools rather than a generic data-query tool.
+- Initial tools: `list_loaded_mods` and `find_recipes_by_output`.
 - The initial loaded-mod result includes mod ID, display name, and version.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
