@@ -1,4 +1,4 @@
-package com.drakmyth.minecraft.blockwisemcp.core;
+package com.drakmyth.minecraft.blockwisemcp.core.mods;
 
 import java.util.List;
 

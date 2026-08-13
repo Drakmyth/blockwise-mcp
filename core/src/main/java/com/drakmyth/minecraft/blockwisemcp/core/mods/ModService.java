@@ -4,8 +4,8 @@ import static com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorE
 import static com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException.Reason.STALE;
 import static com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException.Reason.UNSUPPORTED_FORMAT;
 
-import com.drakmyth.minecraft.blockwisemcp.core.LoadedMod;
-import com.drakmyth.minecraft.blockwisemcp.core.LoadedModSource;
+import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
+import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedModSource;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.Cursor;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.CursorCodec;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public final class LoadedModQueryService {
+public final class ModService {
     public static final int DEFAULT_LIMIT = 20;
     public static final int MAX_LIMIT = 100;
 
@@ -25,22 +25,22 @@ public final class LoadedModQueryService {
     private final long generation;
     private final CursorCodec cursorCodec;
 
-    public LoadedModQueryService(LoadedModSource source, long generation) {
+    public ModService(LoadedModSource source, long generation) {
         this(source, generation, new CursorCodec());
     }
 
-    LoadedModQueryService(LoadedModSource source, long generation, CursorCodec cursorCodec) {
+    ModService(LoadedModSource source, long generation, CursorCodec cursorCodec) {
         this.source = Objects.requireNonNull(source, "source");
         this.generation = generation;
         this.cursorCodec = Objects.requireNonNull(cursorCodec, "cursorCodec");
     }
 
-    public Page<LoadedMod> query(LoadedModQuery query) {
-        Objects.requireNonNull(query, "query");
-        var filter = normalizeFilter(query.filter());
-        var limit = query.limit() == null ? DEFAULT_LIMIT : query.limit();
+    public Page<LoadedMod> listLoadedMods(ListLoadedModsRequest request) {
+        Objects.requireNonNull(request, "request");
+        var filter = normalizeFilter(request.filter());
+        var limit = request.limit() == null ? DEFAULT_LIMIT : request.limit();
         validateLimit(limit);
-        var position = decodePosition(query.cursor(), filter);
+        var position = decodePosition(request.cursor(), filter);
 
         var matches = source.getLoadedMods().stream()
                 .filter(mod -> matches(mod, filter))

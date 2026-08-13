@@ -26,7 +26,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - After validating the runtime, use two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
 - The next milestone adds a minimal loaded-mod contract in `core`, a NeoForge implementation, and GameTest coverage without MCP transport.
 - Its GameTest verifies Blockwise metadata end to end: ID, display name, and project version.
-- The following milestone adds a core loaded-mod query service with filtering, stable sorting, and cursor pagination, without MCP transport.
+- The following milestone adds `ModService.listLoadedMods(ListLoadedModsRequest)` with filtering, stable sorting, and cursor pagination, without MCP transport.
+- Keep loaded-mod domain types under `core.mods`; retain `LoadedMod` as the sole metadata model until broader reuse justifies `ModMetadata`.
 - Extract a separate MCP server module only when another deployment requires it.
 - Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
 - Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
