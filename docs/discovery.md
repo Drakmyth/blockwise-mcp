@@ -26,6 +26,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Keep the README concise: purpose, status, initial scope, and a discovery-document link; defer installation instructions until an artifact is runnable.
 - The initial target is NeoForge for Minecraft 1.21.1.
 - The mod ID is provisionally `registrymcp`, pending product naming.
+- Provisional naming requirement: include `MCP` explicitly, while recognizing its ambiguity with Minecraft's former Mod Coder Pack.
 - The initial system will query a running Minecraft instance.
 - Offline modpack inspection is deferred, but not ruled out.
 - Integrated single-player is the first-priority runtime environment.
