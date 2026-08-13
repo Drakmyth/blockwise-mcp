@@ -62,7 +62,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Each tool defines a fixed stable ordering; client-selected sorting is not initially supported.
 - Loaded-mod results sort by mod ID using natural string order.
 - Runtime sources return immutable per-call lists in loader order; query and pagination services own stable sorting. Do not add ordering flags before measurement justifies them.
-- Collection tools share one opaque cursor envelope containing dataset generation, query identity, and position.
+- Collection tools share one opaque cursor envelope containing format version, dataset generation, query identity, and position.
+- Unsupported cursor format versions fail explicitly, including when a cursor spans an application upgrade.
 - Cursors fail explicitly when their dataset generation is stale or their query identity does not match the request.
 - Sources with static lifecycle data, such as loaded mods, may retain one generation for the process lifetime.
 - The first recipe operation should find recipes that produce a specified item.
