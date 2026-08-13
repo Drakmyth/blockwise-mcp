@@ -50,6 +50,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 ## Provisional direction
 
 - Prioritize fast tests for core contracts and services, supplemented by focused NeoForge integration tests for runtime extraction and lifecycle behavior.
+- Provisional: pull requests to `master` must pass both core and NeoForge integration tests; avoid duplicate CI on ordinary branch pushes.
 - Query live Minecraft managers initially; add snapshots only if measurement justifies their startup and lifecycle cost.
 - Schedule bounded data extraction on Minecraft's server thread when required by API thread-safety; serialize responses off-thread.
 - Fail requests explicitly when the game runtime is unavailable or bounded server-thread work times out.
