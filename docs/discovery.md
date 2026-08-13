@@ -20,6 +20,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The first functional milestone proves the mod loads in development and CI, without MCP or registry-query functionality.
 - Configure both client and dedicated-server development runs to catch accidental client-only coupling early.
 - CI runs NeoForge's headless GameTest server, not only compilation and packaging, to prove the mod loads.
+- Log one concise startup message; do not emit startup messages to in-game chat.
 - After validating the runtime, use two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
 - Extract a separate MCP server module only when another deployment requires it.
 - Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
