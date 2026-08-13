@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+/** Provides loader-independent operations over runtime mod metadata. */
 public final class ModService {
     public static final int DEFAULT_LIMIT = 20;
     public static final int MAX_LIMIT = 100;
@@ -30,6 +31,14 @@ public final class ModService {
         this.cursorCodec = Objects.requireNonNull(cursorCodec, "cursorCodec");
     }
 
+    /**
+     * Lists loaded mods by natural ID order after applying the requested filter.
+     *
+     * @param request filtering and pagination input; nullable fields mean omitted input
+     * @return an immutable page and an optional continuation cursor
+     * @throws NullPointerException if {@code request} is null
+     * @throws IllegalArgumentException if the limit or cursor is invalid
+     */
     public Page<LoadedMod> listLoadedMods(ListLoadedModsRequest request) {
         Objects.requireNonNull(request, "request");
         var filter = normalizeFilter(request.filter());

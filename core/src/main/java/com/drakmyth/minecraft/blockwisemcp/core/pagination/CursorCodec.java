@@ -9,7 +9,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
+/** Encodes and validates opaque, URL-safe pagination cursors. */
 public final class CursorCodec {
+    /** Creates an opaque cursor from service-owned pagination state. */
     public String encode(int formatVersion, long generation, String queryIdentity, String position) {
         var cursor = new Cursor(formatVersion, generation, queryIdentity, position);
         try {
@@ -26,6 +28,11 @@ public final class CursorCodec {
         }
     }
 
+    /**
+     * Validates a cursor against the current query and returns its internal position.
+     *
+     * @throws InvalidCursorException if the cursor is malformed, unsupported, stale, or mismatched
+     */
     public String decodePosition(
             String encoded,
             int expectedFormatVersion,
