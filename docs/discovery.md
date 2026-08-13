@@ -61,6 +61,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
 - Collection queries default to 20 results and allow at most 100 results per page.
 - Loaded-mod filtering uses case-insensitive substring matching over mod ID and display name; version is not searchable.
+- Filtering strategies are dataset-specific. Retain the simple loaded-mod filter now, but do not default larger collections to full-scan substring matching without revisiting indexing and structured filters.
 - Omitted or blank loaded-mod filters match all mods.
 - Page limits outside 1 through 100 fail as invalid input rather than being silently clamped.
 - Each tool defines a fixed stable ordering; client-selected sorting is not initially supported.
