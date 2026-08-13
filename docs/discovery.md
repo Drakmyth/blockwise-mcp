@@ -21,6 +21,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The highest-value initial data categories are:
   1. Loaded mods
   2. Recipes
+- The initial loaded-mod result includes mod ID, display name, and version.
 - The first recipe operation should find recipes that produce a specified item.
 - Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
 - Initial recipe results will not include raw serialized recipes.
@@ -53,7 +54,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Which semantics must the recipe contract support before its first release?
 - How should an extensible, structured context represent machine settings and other type-specific recipe data?
 - How should custom and dynamic recipes report information that cannot be represented faithfully?
-- Which information about loaded mods is useful to AI clients?
+- Should later loaded-mod results include metadata such as dependencies and source information?
 - Which MCP network transport and protocol version should be supported?
 - What lifecycle and consistency guarantees should apply during datapack reloads?
 - What repository, build, testing, and documentation conventions should be adopted?
