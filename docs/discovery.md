@@ -27,6 +27,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Provisional: errors include stable machine-readable codes, concise messages, and retry guidance when applicable.
 - Do not encode contract versions in tool names.
 - Provisional: expose a project schema version in structured output rather than transport-specific headers.
+- Before 1.0, documented schema changes may be incompatible; backward compatibility is required from 1.0 onward.
 - The initial loaded-mod result includes mod ID, display name, and version.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
