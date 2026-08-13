@@ -10,7 +10,8 @@
 - Keep responses and project documentation concise.
 - Work on dedicated branches; commit and push focused changes as work progresses.
 - Keep each pull request production-ready, focused, and ideally under a few hundred changed lines.
-- When requesting PR review, provide a clean squash-merge summary with `Co-authored-by: Codex <codex@openai.com>`.
+- When requesting PR review, provide a squash message with an optional one-line overview followed by a high-value commit log. Preserve meaningful delivered detail; omit or reword redundant entries.
+- End squash messages with `Co-authored-by: Codex <codex@openai.com>` unless a verified Codex GitHub noreply address is established.
 
 ## Discovery records
 
