@@ -12,7 +12,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 
 - The project will use the MIT license.
 - The implementation language is Java 21.
-- The base Java package and Maven group are `com.drakmyth.minecraft.registrymcp`; the owner controls `drakmyth.com`.
+- The base Java package and Maven group are `com.drakmyth.minecraft.blockwise`; the owner controls `drakmyth.com`.
 - Establish a minimal NeoForge 1.21.1 mod and development environment before extracting the Minecraft-independent `core` module.
 - The first functional milestone proves the mod loads in development and CI, without MCP or registry-query functionality.
 - Configure both client and dedicated-server development runs to catch accidental client-only coupling early.
