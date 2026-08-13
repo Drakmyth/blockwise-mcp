@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.Base64;
 
 public final class CursorCodec {
-    public String encode(Cursor cursor) {
+    public String encode(int formatVersion, long generation, String queryIdentity, String position) {
+        var cursor = new Cursor(formatVersion, generation, queryIdentity, position);
         try {
             var bytes = new ByteArrayOutputStream();
             try (var output = new DataOutputStream(bytes)) {
@@ -25,7 +26,29 @@ public final class CursorCodec {
         }
     }
 
-    public Cursor decode(String encoded) {
+    public String decodePosition(
+            String encoded,
+            int expectedFormatVersion,
+            long expectedGeneration,
+            String expectedQueryIdentity) {
+        var cursor = decode(encoded);
+        if (cursor.formatVersion() != expectedFormatVersion) {
+            throw new InvalidCursorException(
+                    InvalidCursorException.Reason.UNSUPPORTED_FORMAT,
+                    "Cursor format is unsupported");
+        }
+        if (cursor.generation() != expectedGeneration) {
+            throw new InvalidCursorException(InvalidCursorException.Reason.STALE, "Cursor is stale");
+        }
+        if (!cursor.queryIdentity().equals(expectedQueryIdentity)) {
+            throw new InvalidCursorException(
+                    InvalidCursorException.Reason.QUERY_MISMATCH,
+                    "Cursor does not match the query");
+        }
+        return cursor.position();
+    }
+
+    private Cursor decode(String encoded) {
         try {
             var bytes = Base64.getUrlDecoder().decode(encoded);
             try (var input = new DataInputStream(new ByteArrayInputStream(bytes))) {

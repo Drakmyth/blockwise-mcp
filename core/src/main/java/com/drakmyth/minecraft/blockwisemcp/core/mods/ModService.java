@@ -1,12 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.core.mods;
 
-import static com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException.Reason.QUERY_MISMATCH;
-import static com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException.Reason.STALE;
-import static com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException.Reason.UNSUPPORTED_FORMAT;
-
 import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedModSource;
-import com.drakmyth.minecraft.blockwisemcp.core.pagination.Cursor;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.CursorCodec;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.Page;
@@ -52,7 +47,7 @@ public final class ModService {
         var hasNextPage = matches.size() > limit;
         var items = hasNextPage ? matches.subList(0, limit) : matches;
         var nextCursor = hasNextPage
-                ? cursorCodec.encode(new Cursor(CURSOR_FORMAT_VERSION, generation, filter, items.getLast().id()))
+                ? cursorCodec.encode(CURSOR_FORMAT_VERSION, generation, filter, items.getLast().id())
                 : null;
         return new Page<>(items, nextCursor);
     }
@@ -61,17 +56,7 @@ public final class ModService {
         if (encodedCursor == null || encodedCursor.isBlank()) {
             return null;
         }
-        var cursor = cursorCodec.decode(encodedCursor);
-        if (cursor.formatVersion() != CURSOR_FORMAT_VERSION) {
-            throw invalid(UNSUPPORTED_FORMAT, "Cursor format is unsupported");
-        }
-        if (cursor.generation() != generation) {
-            throw invalid(STALE, "Cursor is stale");
-        }
-        if (!cursor.queryIdentity().equals(filter)) {
-            throw invalid(QUERY_MISMATCH, "Cursor does not match the query");
-        }
-        return cursor.position();
+        return cursorCodec.decodePosition(encodedCursor, CURSOR_FORMAT_VERSION, generation, filter);
     }
 
     private static boolean matches(LoadedMod mod, String filter) {
@@ -88,10 +73,6 @@ public final class ModService {
         if (limit < 1 || limit > MAX_LIMIT) {
             throw new IllegalArgumentException("limit must be between 1 and " + MAX_LIMIT);
         }
-    }
-
-    private static InvalidCursorException invalid(InvalidCursorException.Reason reason, String message) {
-        return new InvalidCursorException(reason, message);
     }
 }
 
