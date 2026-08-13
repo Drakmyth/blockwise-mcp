@@ -53,7 +53,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Before 1.0, documented schema changes may be incompatible; backward compatibility is required from 1.0 onward.
 - After 1.0, minor versions may add optional fields; removals and semantic changes require a new major schema version.
 - The initial loaded-mod result includes mod ID, display name, and version.
-- Preserve loader-reported mod metadata rather than imposing Blockwise validation rules on names or versions.
+- `LoadedMod` requires non-null ID, display name, and version while preserving their loader-reported string contents exactly.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
 - Each tool defines a fixed stable ordering; client-selected sorting is not initially supported.
