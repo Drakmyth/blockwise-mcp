@@ -48,3 +48,17 @@ var generateModMetadata = tasks.register('generateModMetadata', ProcessResources
 
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
+
+var generateGameTestServerProperties = tasks.register('generateGameTestServerProperties') {
+    var outputFile = layout.projectDirectory.file('run/server.properties')
+    outputs.file outputFile
+
+    doLast {
+        outputFile.asFile.parentFile.mkdirs()
+        outputFile.asFile.text = 'online-mode=false\n'
+    }
+}
+
+tasks.named('runGameTestServer') {
+    dependsOn generateGameTestServerProperties
+}
