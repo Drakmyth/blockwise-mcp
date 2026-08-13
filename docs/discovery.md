@@ -10,6 +10,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 
 ## Accepted decisions
 
+- The project will use the MIT license.
 - The initial target is NeoForge for Minecraft 1.21.1.
 - The initial system will query a running Minecraft instance.
 - Offline modpack inspection is deferred, but not ruled out.
