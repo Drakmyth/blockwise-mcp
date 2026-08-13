@@ -11,7 +11,7 @@
 - Work on dedicated branches; commit and push focused changes as work progresses.
 - Keep each pull request production-ready, focused, and ideally under a few hundred changed lines.
 - When requesting PR review, provide a squash message with an optional one-line overview followed by a high-value commit log. Preserve meaningful delivered detail; omit or reword redundant entries.
-- Format squash messages flush-left in a code block so they can be copied without removing indentation.
+- Provide squash messages as flush-left plain text, not fenced code blocks, because pi visually indents copied code-block content.
 - End squash messages with `Co-authored-by: Codex <codex@openai.com>`.
 
 ## Discovery records
