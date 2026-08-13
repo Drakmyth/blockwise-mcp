@@ -1,0 +1,64 @@
+# Project Discovery
+
+This document records product discovery for Minecraft Registry MCP. It distinguishes accepted direction from provisional choices and unresolved questions. It is not an implementation specification.
+
+## Product goal
+
+Provide AI clients with structured, reliable access to authoritative data from a running modded Minecraft instance, avoiding stale public websites and brittle parsing of game files.
+
+The motivating user experience is AI-assisted play, particularly understanding crafting chains and, eventually, production systems. The project is currently focused on exposing runtime data rather than implementing production optimization itself.
+
+## Accepted decisions
+
+- The initial target is NeoForge for Minecraft 1.21.1.
+- The initial system will query a running Minecraft instance.
+- Offline modpack inspection is deferred, but not ruled out.
+- Integrated single-player is the first-priority runtime environment.
+- Multiplayer and dedicated-server support should remain on the roadmap.
+- The MCP transport will be network-based rather than stdio-oriented.
+- Initial releases will bind to localhost by default.
+- Public remote access is deferred until authentication, authorization, transport security, resource limits, and related threats have an explicit design.
+- The highest-value initial data categories are:
+  1. Loaded mods
+  2. Recipes
+- The first recipe operation should find recipes that produce a specified item.
+
+## Provisional direction
+
+- Prefer embedding the MCP server in the Minecraft process to couple its lifecycle to the game and minimize user setup.
+- Keep the game-data interface sufficiently isolated that a separate MCP process could be introduced later.
+- Favor stable external contracts with loader- and Minecraft-version-specific adapters over attempting a single cross-version binary.
+- Treat server-owned state as authoritative, including when running an integrated server in single-player.
+
+## Constraints and risks
+
+- Recipes, tags, datapack content, and dynamic mod data do not all behave like Minecraft registries; the architecture should not incorrectly model every source as a registry.
+- Client-only access may be incomplete or misleading in multiplayer because authoritative data can reside on the server.
+- An embedded server shares Minecraft's JVM, dependency environment, failure domain, and resource limits.
+- MCP requests must not access game state from unsafe threads or block the game tick for unbounded periods.
+- Local network transport still requires careful interface binding and endpoint lifecycle handling.
+- A publicly reachable endpoint could expose mod versions, configuration, hidden content, or server internals and could enable resource-exhaustion attacks.
+- Modded recipes may contain dynamic or custom ingredients and outputs that cannot be represented losslessly by one normalized universal schema.
+
+## Open questions
+
+- Which recipe operation should follow output lookup?
+- How should custom and dynamic recipe data be represented without falsely claiming completeness?
+- Which information about loaded mods is useful to AI clients?
+- Which MCP network transport and protocol version should be supported?
+- What lifecycle and consistency guarantees should apply during datapack reloads?
+- What repository, build, testing, and documentation conventions should be adopted?
+- How should MCP tools and resources expose recipe data?
+
+## Deferred scope
+
+- Offline inspection of installed modpacks.
+- Public remote access.
+- Production-line optimization as a project-owned capability.
+- Runtime data categories beyond loaded mods and recipes, pending later prioritization.
+
+## Decision history
+
+### Initial discovery
+
+The project began with a broad description covering recipes, items, tags, and other registry data. Discovery narrowed the first useful scope to loaded mods and recipes from a live integrated single-player runtime. Localhost-only network access was selected as the safe initial boundary, while multiplayer, dedicated servers, remote access, and offline inspection remain future considerations.
