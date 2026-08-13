@@ -9,18 +9,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ModServiceTest {
     private static final long GENERATION = 7;
-
-    private final ModService service = serviceWith(
+    private static final List<LoadedMod> MODS = List.of(
             new LoadedMod("zeta", "Craft Helper", "1"),
             new LoadedMod("alpha", "Alpha", "2"),
             new LoadedMod("middle", "Middle", "3"));
+
+    private final ModService service = serviceWithGeneration(GENERATION);
 
     @Test
     void filtersIdAndNameCaseInsensitivelyAndSortsById() {
@@ -72,18 +72,7 @@ class ModServiceTest {
     }
 
     private ModService serviceWithGeneration(long generation) {
-        return new ModService(serviceSource(), generation);
-    }
-
-    private ModService serviceWith(LoadedMod... mods) {
-        return new ModService(() -> List.of(mods), GENERATION);
-    }
-
-    private com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedModSource serviceSource() {
-        return () -> List.of(
-                new LoadedMod("zeta", "Craft Helper", "1"),
-                new LoadedMod("alpha", "Alpha", "2"),
-                new LoadedMod("middle", "Middle", "3"));
+        return new ModService(() -> MODS, generation);
     }
 
     private static List<String> ids(List<LoadedMod> mods) {
