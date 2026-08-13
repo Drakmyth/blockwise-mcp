@@ -11,7 +11,9 @@ The motivating user experience is AI-assisted play, particularly understanding c
 ## Accepted decisions
 
 - The project will use the MIT license.
-- The implementation language is Java.
+- The implementation language is Java 21.
+- Start with two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
+- Extract a separate MCP server module only when another deployment requires it.
 - The initial target is NeoForge for Minecraft 1.21.1.
 - The initial system will query a running Minecraft instance.
 - Offline modpack inspection is deferred, but not ruled out.
@@ -76,7 +78,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Should later loaded-mod results include metadata such as dependencies and source information?
 - Which MCP network transport and protocol version should be supported?
 - What lifecycle and consistency guarantees should apply during datapack reloads?
-- What repository, build, testing, and documentation conventions should be adopted?
+- Which testing and documentation conventions should be adopted?
 - How should MCP tools and resources expose recipe data?
 
 ## Deferred scope
