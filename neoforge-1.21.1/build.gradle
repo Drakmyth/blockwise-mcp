@@ -3,6 +3,11 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.143'
 }
 
+dependencies {
+    implementation project(':core')
+    jarJar project(':core')
+}
+
 base {
     archivesName = 'blockwise-mcp-neoforge-${minecraft_version}'
 }
@@ -23,6 +28,7 @@ neoForge {
         gameTestServer {
             type = 'gameTestServer'
             systemProperty 'neoforge.enabledGameTestNamespaces', 'blockwisemcp'
+            systemProperty 'blockwise.test.expectedVersion', project.version.toString()
         }
     }
 
