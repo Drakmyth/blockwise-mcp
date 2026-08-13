@@ -1,0 +1,64 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.143'
+}
+
+base {
+    archivesName = 'blockwise-mcp-neoforge-${minecraft_version}'
+}
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+        }
+
+        gameTestServer {
+            type = 'gameTestServer'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'blockwisemcp'
+        }
+    }
+
+    mods {
+        blockwisemcp {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version_range: minecraft_version_range,
+            neo_version_range: neo_version_range,
+            loader_version_range: loader_version_range,
+            mod_version: project.version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into layout.buildDirectory.dir('generated/sources/modMetadata')
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+var generateGameTestServerProperties = tasks.register('generateGameTestServerProperties') {
+    var outputFile = layout.projectDirectory.file('run/server.properties')
+    outputs.file outputFile
+
+    doLast {
+        outputFile.asFile.parentFile.mkdirs()
+        outputFile.asFile.text = 'online-mode=false\n'
+    }
+}
+
+tasks.named('runGameTestServer') {
+    dependsOn generateGameTestServerProperties
+}

@@ -10,7 +10,7 @@
 - Keep responses and project documentation concise.
 - Use ASCII punctuation instead of equivalent Unicode punctuation.
 - Work on dedicated branches; commit and push focused changes as work progresses.
-- Keep each pull request production-ready, focused, and ideally under a few hundred changed lines.
+- Keep each pull request buildable, deployable, focused, and ideally at or below 350 changed lines.
 - When requesting PR review, provide a squash message with an optional one-line overview followed by a high-value commit log. Preserve meaningful delivered detail; omit or reword redundant entries.
 - End squash messages with `Co-authored-by: Codex <codex@openai.com>`.
 

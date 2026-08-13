@@ -1,0 +1,35 @@
+name: Build
+
+on:
+    pull_request:
+        branches:
+            - master
+
+permissions:
+    contents: read
+
+concurrency:
+    group: build-${{ github.workflow }}-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v7
+
+            - name: Set up Java 21
+              uses: actions/setup-java@v5
+              with:
+                  distribution: temurin
+                  java-version: '21'
+
+            - name: Set up Gradle
+              uses: gradle/actions/setup-gradle@v6
+
+            - name: Build
+              run: ./gradlew build
+
+            - name: Run GameTests
+              run: ./gradlew :neoforge-1.21.1:runGameTestServer

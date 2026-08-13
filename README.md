@@ -1,4 +1,4 @@
-# Minecraft Registry MCP
+# Blockwise MCP
 
 An MCP server for querying authoritative runtime data from modded Minecraft.
 

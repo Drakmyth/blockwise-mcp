@@ -1,6 +1,6 @@
 # Project Discovery
 
-This document records product discovery for Minecraft Registry MCP. It distinguishes accepted direction from provisional choices and unresolved questions. It is not an implementation specification.
+This document records product discovery for Blockwise MCP. It distinguishes accepted direction from provisional choices and unresolved questions. It is not an implementation specification.
 
 ## Product goal
 
@@ -11,9 +11,19 @@ The motivating user experience is AI-assisted play, particularly understanding c
 ## Accepted decisions
 
 - The project will use the MIT license.
-- The implementation language is Java 21.
-- The base Java package and Maven group are `com.drakmyth.minecraft.registrymcp`; the owner controls `drakmyth.com`.
-- Start with two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
+- Java 21 is the project baseline for all modules running inside Minecraft.
+- The base Java package and Maven group are `com.drakmyth.minecraft.blockwisemcp`; the owner controls `drakmyth.com`.
+- Keep root Gradle configuration loader-neutral.
+- Use NeoForge's official Minecraft 1.21.1 ModDevGradle template only as a reference for an isolated NeoForge module.
+- Pin exact Gradle, ModDevGradle, and NeoForge build versions; update them explicitly.
+- Require Minecraft 1.21.1 exactly and allow compatible NeoForge runtime versions in `[21.1.244,21.2)`.
+- Use NeoForge's default official Mojang mappings for 1.21.1; avoid Parchment unless its added documentation becomes necessary.
+- Establish a minimal NeoForge 1.21.1 mod and development environment before extracting the Minecraft-independent `core` module.
+- The first functional milestone proves the mod loads in development and CI, without MCP or registry-query functionality.
+- Configure both client and dedicated-server development runs to catch accidental client-only coupling early.
+- CI runs NeoForge's headless GameTest server, not only compilation and packaging, to prove the mod loads.
+- Log one concise startup message; do not emit startup messages to in-game chat.
+- After validating the runtime, use two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
 - Extract a separate MCP server module only when another deployment requires it.
 - Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
 - Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
@@ -21,6 +31,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The initial template contains `README.md`, `LICENSE`, `.gitignore`, `.editorconfig`, and `.gitattributes`.
 - Keep the README concise: purpose, status, initial scope, and a discovery-document link; defer installation instructions until an artifact is runnable.
 - The initial target is NeoForge for Minecraft 1.21.1.
+- The provisional product name is `Blockwise MCP`, pending broader availability and branding review.
+- Include `MCP` explicitly, while recognizing its ambiguity with Minecraft's former Mod Coder Pack.
 - The initial system will query a running Minecraft instance.
 - Offline modpack inspection is deferred, but not ruled out.
 - Integrated single-player is the first-priority runtime environment.
@@ -79,6 +91,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 
 ## Open questions
 
+- Confirm that `Blockwise MCP` is sufficiently available and compliant with Minecraft branding guidelines.
+- The mod ID is `blockwisemcp`; repository and artifact names use `blockwise-mcp`.
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
 - Which semantics must the recipe contract support before its first release?
