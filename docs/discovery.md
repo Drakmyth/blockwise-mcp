@@ -25,7 +25,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The initial template contains `README.md`, `LICENSE`, `.gitignore`, `.editorconfig`, and `.gitattributes`.
 - Keep the README concise: purpose, status, initial scope, and a discovery-document link; defer installation instructions until an artifact is runnable.
 - The initial target is NeoForge for Minecraft 1.21.1.
-- The mod ID is `registrymcp`.
+- The mod ID is provisionally `registrymcp`, pending product naming.
 - The initial system will query a running Minecraft instance.
 - Offline modpack inspection is deferred, but not ruled out.
 - Integrated single-player is the first-priority runtime environment.
@@ -84,6 +84,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 
 ## Open questions
 
+- Choose a distinctive product name that signals a bolt-on Minecraft information service and AI/MCP integration without implying official status.
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
 - Which semantics must the recipe contract support before its first release?
