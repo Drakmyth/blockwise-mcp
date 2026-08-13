@@ -11,7 +11,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 ## Accepted decisions
 
 - The project will use the MIT license.
-- The implementation language is Java 21.
+- Java 21 is the project baseline for all modules running inside Minecraft.
 - The base Java package and Maven group are `com.drakmyth.minecraft.blockwise`; the owner controls `drakmyth.com`.
 - Keep root Gradle configuration loader-neutral.
 - Use NeoForge's official Minecraft 1.21.1 ModDevGradle template only as a reference for an isolated NeoForge module.
