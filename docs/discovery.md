@@ -86,7 +86,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 ## Open questions
 
 - Confirm that `Blockwise MCP` is sufficiently available and compliant with Minecraft branding guidelines.
-- Choose the final mod ID after confirming the product name.
+- The mod ID is `blockwise`.
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
 - Which semantics must the recipe contract support before its first release?
