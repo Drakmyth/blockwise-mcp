@@ -24,6 +24,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The first recipe operation should find recipes that produce a specified item.
 - Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
 - Initial recipe results will not include raw serialized recipes.
+- First recipe milestone: given an exact item ID, return every loaded recipe producing it, including recipe ID, type, item inputs, and item outputs.
 - Early development may begin with item inputs and outputs.
 - A release-ready recipe contract should cover common modded semantics; exotic semantics may follow later.
 - A production modpack is available for real-world contract discovery and validation.
