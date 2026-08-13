@@ -19,6 +19,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
 - Defer CI and Gradle setup until the first functional module provides a meaningful build and tests.
 - The initial template contains `README.md`, `LICENSE`, `.gitignore`, `.editorconfig`, and `.gitattributes`.
+- Keep the README concise: purpose, status, initial scope, and a discovery-document link; defer installation instructions until an artifact is runnable.
 - The initial target is NeoForge for Minecraft 1.21.1.
 - The initial system will query a running Minecraft instance.
 - Offline modpack inspection is deferred, but not ruled out.
