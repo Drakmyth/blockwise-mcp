@@ -58,6 +58,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - `LoadedMod` requires non-null ID, display name, and version while preserving their loader-reported string contents exactly.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
+- Collection queries default to 20 results and allow at most 100 results per page.
 - Loaded-mod filtering uses case-insensitive substring matching over mod ID and display name; version is not searchable.
 - Each tool defines a fixed stable ordering; client-selected sorting is not initially supported.
 - Loaded-mod results sort by mod ID using natural string order.
