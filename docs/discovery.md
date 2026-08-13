@@ -57,6 +57,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
 - Each tool defines a fixed stable ordering; client-selected sorting is not initially supported.
+- Runtime sources preserve loader ordering; query and pagination services own stable sorting. Do not add ordering flags before measurement justifies them.
 - Provisional: cursors carry a dataset generation and fail explicitly when a reload makes them stale.
 - The first recipe operation should find recipes that produce a specified item.
 - Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
