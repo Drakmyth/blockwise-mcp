@@ -10,6 +10,7 @@
 - Keep responses and project documentation concise.
 - Work on dedicated branches; commit and push focused changes as work progresses.
 - Keep each pull request production-ready, focused, and ideally under a few hundred changed lines.
+- When requesting PR review, provide a clean squash-merge summary with `Co-authored-by: Codex <codex@openai.com>`.
 
 ## Discovery records
 
