@@ -24,6 +24,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - CI runs NeoForge's headless GameTest server, not only compilation and packaging, to prove the mod loads.
 - Log one concise startup message; do not emit startup messages to in-game chat.
 - After validating the runtime, use two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
+- The next milestone adds a minimal loaded-mod contract in `core`, a NeoForge implementation, and GameTest coverage without MCP transport.
+- Its GameTest verifies Blockwise metadata end to end: ID, display name, and project version.
 - Extract a separate MCP server module only when another deployment requires it.
 - Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
 - Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
@@ -52,9 +54,11 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Before 1.0, documented schema changes may be incompatible; backward compatibility is required from 1.0 onward.
 - After 1.0, minor versions may add optional fields; removals and semantic changes require a new major schema version.
 - The initial loaded-mod result includes mod ID, display name, and version.
+- `LoadedMod` requires non-null ID, display name, and version while preserving their loader-reported string contents exactly.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
 - Each tool defines a fixed stable ordering; client-selected sorting is not initially supported.
+- Runtime sources return immutable per-call lists in loader order; query and pagination services own stable sorting. Do not add ordering flags before measurement justifies them.
 - Provisional: cursors carry a dataset generation and fail explicitly when a reload makes them stale.
 - The first recipe operation should find recipes that produce a specified item.
 - Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
