@@ -25,6 +25,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Initial tools: `list_loaded_mods` and `find_recipes_by_output`.
 - Successful tool responses use structured data without a redundant human-readable summary, subject to MCP client compatibility.
 - Provisional: errors include stable machine-readable codes, concise messages, and retry guidance when applicable.
+- Do not encode contract versions in tool names.
+- Provisional: expose a project schema version in structured output rather than transport-specific headers.
 - The initial loaded-mod result includes mod ID, display name, and version.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
