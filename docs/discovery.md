@@ -23,6 +23,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
   2. Recipes
 - Expose focused, single-purpose MCP tools rather than a generic data-query tool.
 - Initial tools: `list_loaded_mods` and `find_recipes_by_output`.
+- Successful tool responses use structured data without a redundant human-readable summary, subject to MCP client compatibility.
 - The initial loaded-mod result includes mod ID, display name, and version.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
