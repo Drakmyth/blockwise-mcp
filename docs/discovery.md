@@ -38,6 +38,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 
 - Query live Minecraft managers initially; add snapshots only if measurement justifies their startup and lifecycle cost.
 - Schedule bounded data extraction on Minecraft's server thread when required by API thread-safety; serialize responses off-thread.
+- Fail requests explicitly when the game runtime is unavailable or bounded server-thread work times out.
 - Prefer embedding the MCP server in the Minecraft process to couple its lifecycle to the game and minimize user setup.
 - Keep the game-data interface sufficiently isolated that a separate MCP process could be introduced later.
 - Favor stable external contracts with loader- and Minecraft-version-specific adapters over attempting a single cross-version binary.
