@@ -5,6 +5,10 @@ plugins {
 allprojects {
     group = 'com.drakmyth.minecraft.blockwisemcp'
     version = '0.1.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
 }
 
 subprojects {
