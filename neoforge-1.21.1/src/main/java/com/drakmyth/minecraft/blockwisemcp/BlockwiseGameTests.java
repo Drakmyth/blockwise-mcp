@@ -11,6 +11,16 @@ public final class BlockwiseGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void initializes(GameTestHelper helper) {
+        if (!Blockwise.isInitialized()) {
+            helper.fail("Blockwise was not initialized");
+            return;
+        }
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void exposesBlockwiseMetadata(GameTestHelper helper) {
         var blockwise = new NeoForgeLoadedModSource().getLoadedMods().stream()
                 .filter(mod -> mod.id().equals(Blockwise.MOD_ID))
