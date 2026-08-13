@@ -8,10 +8,11 @@
 - End every turn with one question or a request for verification.
 - Challenge assumptions, gaps, and weak reasoning; do not accept answers uncritically.
 - Keep responses and project documentation concise.
+- Use ASCII punctuation instead of equivalent Unicode punctuation.
 - Work on dedicated branches; commit and push focused changes as work progresses.
 - Keep each pull request production-ready, focused, and ideally under a few hundred changed lines.
 - When requesting PR review, provide a squash message with an optional one-line overview followed by a high-value commit log. Preserve meaningful delivered detail; omit or reword redundant entries.
-- End squash messages with `Co-authored-by: Codex <codex@openai.com>` unless a verified Codex GitHub noreply address is established.
+- End squash messages with `Co-authored-by: Codex <codex@openai.com>`.
 
 ## Discovery records
 

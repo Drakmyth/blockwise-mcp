@@ -15,6 +15,11 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The base Java package and Maven group are `com.drakmyth.minecraft.registrymcp`; the owner controls `drakmyth.com`.
 - Start with two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
 - Extract a separate MCP server module only when another deployment requires it.
+- Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
+- Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
+- Defer CI and Gradle setup until the first functional module provides a meaningful build and tests.
+- The initial template contains `README.md`, `LICENSE`, `.gitignore`, `.editorconfig`, and `.gitattributes`.
+- Keep the README concise: purpose, status, initial scope, and a discovery-document link; defer installation instructions until an artifact is runnable.
 - The initial target is NeoForge for Minecraft 1.21.1.
 - The initial system will query a running Minecraft instance.
 - Offline modpack inspection is deferred, but not ruled out.
