@@ -23,7 +23,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
   2. Recipes
 - The initial loaded-mod result includes mod ID, display name, and version.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
-- Loaded-mod listing should support filtering and pagination.
+- All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
 - The first recipe operation should find recipes that produce a specified item.
 - Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
 - Initial recipe results will not include raw serialized recipes.
