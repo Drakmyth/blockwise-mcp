@@ -16,7 +16,7 @@ An unofficial MCP server for querying runtime data from modded Minecraft.
 [[dependencies.blockwisemcp]]
 modId="neoforge"
 type="required"
-versionRange="[${neo_version},)"
+versionRange="${neo_version_range}"
 ordering="NONE"
 side="BOTH"
 

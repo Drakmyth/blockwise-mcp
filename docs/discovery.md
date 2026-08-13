@@ -15,7 +15,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The base Java package and Maven group are `com.drakmyth.minecraft.blockwisemcp`; the owner controls `drakmyth.com`.
 - Keep root Gradle configuration loader-neutral.
 - Use NeoForge's official Minecraft 1.21.1 ModDevGradle template only as a reference for an isolated NeoForge module.
-- Pin exact Gradle, ModDevGradle, and NeoForge versions; update them explicitly.
+- Pin exact Gradle, ModDevGradle, and NeoForge build versions; update them explicitly.
+- Require Minecraft 1.21.1 exactly and allow compatible NeoForge runtime versions in `[21.1.244,21.2)`.
 - Use NeoForge's default official Mojang mappings for 1.21.1; avoid Parchment unless its added documentation becomes necessary.
 - Establish a minimal NeoForge 1.21.1 mod and development environment before extracting the Minecraft-independent `core` module.
 - The first functional milestone proves the mod loads in development and CI, without MCP or registry-query functionality.
