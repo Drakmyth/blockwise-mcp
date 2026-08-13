@@ -41,7 +41,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Fail requests explicitly when the game runtime is unavailable or bounded server-thread work times out.
 - Prefer embedding the MCP server in the Minecraft process to couple its lifecycle to the game and minimize user setup.
 - Keep the game-data interface sufficiently isolated that a separate MCP process could be introduced later.
-- Favor stable external contracts with loader- and Minecraft-version-specific adapters over attempting a single cross-version binary.
+- Keep stable core contracts and project-owned data models independent of NeoForge and Minecraft classes.
+- Use a NeoForge 1.21.1 adapter initially; prefer loader- and version-specific adapters over a single cross-version binary.
 - Treat server-owned state as authoritative, including when running an integrated server in single-player.
 
 ## Constraints and risks
