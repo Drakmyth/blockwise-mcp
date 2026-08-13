@@ -22,6 +22,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
   1. Loaded mods
   2. Recipes
 - The first recipe operation should find recipes that produce a specified item.
+- Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
 
 ## Provisional direction
 
@@ -43,6 +44,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 ## Open questions
 
 - Which recipe operation should follow output lookup?
+- How should item variants with data components be queried?
 - How should custom and dynamic recipe data be represented without falsely claiming completeness?
 - Which information about loaded mods is useful to AI clients?
 - Which MCP network transport and protocol version should be supported?
