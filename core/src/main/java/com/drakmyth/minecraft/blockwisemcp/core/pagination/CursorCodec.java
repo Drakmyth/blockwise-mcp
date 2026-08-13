@@ -61,7 +61,7 @@ public final class CursorCodec {
             try (var input = new DataInputStream(new ByteArrayInputStream(bytes))) {
                 var cursor = new Cursor(input.readInt(), input.readLong(), input.readUTF(), input.readUTF());
                 if (input.available() != 0) {
-                    throw malformed(null);
+                    throw malformed();
                 }
                 return cursor;
             }
@@ -73,11 +73,13 @@ public final class CursorCodec {
         }
     }
 
+    private static InvalidCursorException malformed() {
+        return new InvalidCursorException(MALFORMED, "Cursor is malformed");
+    }
+
     private static InvalidCursorException malformed(Exception cause) {
-        var exception = new InvalidCursorException(MALFORMED, "Cursor is malformed");
-        if (cause != null) {
-            exception.initCause(cause);
-        }
+        var exception = malformed();
+        exception.initCause(cause);
         return exception;
     }
 }
