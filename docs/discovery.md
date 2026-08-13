@@ -13,6 +13,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - The project will use the MIT license.
 - The implementation language is Java 21.
 - The base Java package and Maven group are `com.drakmyth.minecraft.blockwise`; the owner controls `drakmyth.com`.
+- Keep root Gradle configuration loader-neutral.
+- Use NeoForge's official Minecraft 1.21.1 ModDevGradle template only as a reference for an isolated NeoForge module.
 - Establish a minimal NeoForge 1.21.1 mod and development environment before extracting the Minecraft-independent `core` module.
 - The first functional milestone proves the mod loads in development and CI, without MCP or registry-query functionality.
 - Configure both client and dedicated-server development runs to catch accidental client-only coupling early.
