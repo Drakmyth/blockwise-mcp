@@ -1,6 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.mcp;
 
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
+import com.drakmyth.minecraft.blockwisemcp.mcp.tools.ListLoadedModsTool;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.DefaultServerTransportSecurityValidator;
