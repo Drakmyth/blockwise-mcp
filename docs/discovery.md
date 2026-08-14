@@ -45,8 +45,8 @@ Provide AI clients with structured access to authoritative data from a running m
 - Collection tools default to 20 results and allow at most 100 per page.
 - Each collection tool defines stable ordering; client-selected sorting is not initially supported.
 - Collection cursors are opaque and encode format version, dataset generation, query identity, and position.
-- Reject unsupported, stale, or request-mismatched cursors explicitly.
-- Static lifecycle data may use one generation for the process lifetime; revisit generation ownership for reloadable data.
+- Dataset generations are opaque UUID tokens. Create them per server session and replace them whenever reloadable data changes.
+- Reject unsupported, stale, or request-mismatched cursors explicitly, including cursors from previous server sessions.
 
 ### Loaded mods
 
@@ -61,10 +61,15 @@ Provide AI clients with structured access to authoritative data from a running m
 ### Recipe direction
 
 - The first recipe operation finds every loaded recipe producing an exact namespaced item ID.
-- Initial support covers Minecraft's built-in recipe types, including recipes supplied by mod namespaces.
-- Admit a recipe only when its inputs and output are statically and authoritatively representable; defer custom machine types and input-dependent outputs.
-- Initial results include recipe ID, type, item inputs, and item outputs.
+- Initial support covers Minecraft's built-in crafting, cooking, and stonecutting recipe types, including recipes supplied by mod namespaces. Defer smithing.
+- Admit a recipe only when its inputs and output are statically and authoritatively representable; custom types and dynamic recipes are outside the declared dataset.
+- Fail the request rather than silently omit a recipe that claims supported semantics but cannot be mapped consistently.
+- Use the Minecraft serializer ID as recipe `type` and sort results naturally by recipe ID.
+- Model input as a discriminated `input.format` union: two-dimensional rows for shaped recipes, an ingredient list for shapeless recipes, and one ingredient for single-input recipes.
+- Ingredient `options` contain exact item IDs and `#`-prefixed tag IDs as alternatives; do not expand tags.
+- Initial outputs contain `itemId` and `count`; exclude outputs with non-default data components.
 - Do not expose raw serialized recipes initially.
+- Advance recipe generation after each successful datapack reload and reject cursors from older generations.
 - Keep loader-specific custom ingredient, registration, and reload mechanisms behind adapters; detailed findings are in [recipe portability reconnaissance](recipe-portability.md).
 - The release-ready contract must represent common modded semantics; exotic or dynamic semantics may follow.
 
@@ -100,9 +105,6 @@ Provide AI clients with structured access to authoritative data from a running m
 - Is `Blockwise MCP` sufficiently available and compliant with Minecraft branding guidance?
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
-- Should unsupported recipes be omitted, counted, or returned as structured unsupported entries?
-- Should initial support include smithing transforms despite missing public generic ingredient accessors?
-- How should tags, item alternatives, shaped layouts, and output components be represented without losing semantics?
 - How should NeoForge detect and publish a successful recipe-generation change after datapack reload?
 - How should type-specific recipe context, custom recipes, and dynamic recipes report semantics that cannot be represented faithfully?
 - Should loaded-mod results later include dependencies or source information?

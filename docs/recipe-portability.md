@@ -120,17 +120,17 @@ The first implementation should preserve these layers:
 
 The source contract should expose a coherent snapshot or generation-bearing result rather than a mutable manager. No `net.minecraft`, NeoForge, or Fabric types should enter `core`.
 
-## Contract questions before implementation
+## Accepted contract direction
 
-The following require explicit decisions:
+- The tool searches only its declared dataset of statically representable built-in recipes. A mapping failure within that dataset fails the request.
+- Smithing transforms and trims are follow-up work.
+- Ingredient options preserve exact item IDs and `#`-prefixed tag IDs without expanding tags.
+- Shaped, shapeless, and single inputs use an `input.format` discriminated union; shaped inputs retain a two-dimensional grid.
+- Outputs expose item ID and count. Component-bearing outputs are deferred.
+- Recipe serializer ID is the public type, and results sort naturally by recipe ID.
+- Recipe generations use opaque per-session UUID tokens and change after every successful datapack reload.
 
-- Whether unsupported recipes are omitted, counted, or returned as structured unsupported entries.
-- Whether the first milestone includes smithing transform recipes despite missing public ingredient accessors.
-- How to distinguish tag ingredients from explicit item alternatives without losing source semantics.
-- Whether output components are represented, summarized, or deferred while matching by item ID.
-- Whether shaped layout is required or a flat ingredient list is sufficient initially.
-- Which stable ordering key follows recipe ID when one recipe can expose multiple outputs.
-- How NeoForge detects and publishes a successful recipe-generation change.
+The remaining implementation question is how NeoForge detects and publishes a successful authoritative recipe reload.
 
 ## Conclusion
 
