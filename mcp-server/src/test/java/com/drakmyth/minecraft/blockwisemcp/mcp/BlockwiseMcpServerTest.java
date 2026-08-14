@@ -5,8 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceId;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.IngredientOption;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeDefinition;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeIngredient;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeInput;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeOutput;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeService;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeSnapshot;
+import com.drakmyth.minecraft.blockwisemcp.mcp.tools.FindRecipesByOutputTool;
 import com.drakmyth.minecraft.blockwisemcp.mcp.tools.ListLoadedModsTool;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
@@ -59,9 +68,68 @@ class BlockwiseMcpServerTest {
     }
 
     @Test
+    void exposesRecipesThroughStreamableHttp() throws Exception {
+        var outputId = ResourceId.parse("minecraft:result");
+        var generation = UUID.randomUUID();
+        var ingredient = new RecipeIngredient(List.of(
+                new IngredientOption.Item(ResourceId.parse("minecraft:coal")),
+                new IngredientOption.Tag(ResourceId.parse("c:coals"))));
+        var recipes = List.of(
+                recipe("example:shaped", new RecipeInput.Shaped(List.of(java.util.Arrays.asList(ingredient, null))), outputId),
+                recipe("example:shapeless", new RecipeInput.Shapeless(List.of(ingredient)), outputId),
+                recipe("example:single", new RecipeInput.Single(ingredient), outputId),
+                recipe(
+                        "example:ignored",
+                        new RecipeInput.Single(ingredient),
+                        ResourceId.parse("minecraft:other_result")));
+        var service = new RecipeService(() -> new RecipeSnapshot(generation, recipes));
+        var tools = List.of(FindRecipesByOutputTool.create(service, directExecutor()));
+        try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
+                var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
+                                "http://" + BlockwiseMcpServer.HOST + ":" + server.port())
+                        .endpoint(BlockwiseMcpServer.ENDPOINT)
+                        .build()).build()) {
+            client.initialize();
+
+            var first = client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                    .arguments(Map.of("outputItemId", outputId.toString(), "limit", 2))
+                    .build());
+            assertFalse(first.isError());
+            var firstOutput = asMap(first.structuredContent());
+            var firstItems = (List<?>) firstOutput.get("items");
+            assertEquals(List.of("shaped", "shapeless"), firstItems.stream()
+                    .map(item -> asMap(asMap(item).get("input")).get("format"))
+                    .toList());
+            var shapedRows = (List<?>) asMap(asMap(firstItems.getFirst()).get("input")).get("rows");
+            var shapedRow = (List<?>) shapedRows.getFirst();
+            assertEquals(List.of("minecraft:coal", "#c:coals"),
+                    asMap(shapedRow.getFirst()).get("options"));
+            assertEquals(null, shapedRow.get(1));
+            assertNotNull(firstOutput.get("nextCursor"));
+
+            var second = client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                    .arguments(Map.of(
+                            "outputItemId", outputId.toString(),
+                            "limit", 2,
+                            "cursor", firstOutput.get("nextCursor")))
+                    .build());
+            var secondItem = asMap(((List<?>) asMap(second.structuredContent()).get("items")).getFirst());
+            assertEquals("single", asMap(secondItem.get("input")).get("format"));
+
+            var invalid = client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                    .arguments(Map.of("outputItemId", "result"))
+                    .build());
+            assertTrue(invalid.isError());
+        }
+    }
+
+    @Test
     void describesEveryPublishedSchemaProperty() throws Exception {
-        var service = new ModService(() -> List.of(), UUID.randomUUID());
-        var tools = List.of(ListLoadedModsTool.create(service, directExecutor()));
+        var modService = new ModService(() -> List.of(), UUID.randomUUID());
+        var recipeService = new RecipeService(() -> new RecipeSnapshot(UUID.randomUUID(), List.of()));
+        var tools = List.of(
+                ListLoadedModsTool.create(modService, directExecutor()),
+                FindRecipesByOutputTool.create(recipeService, directExecutor()));
         try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
                 var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
                                 "http://" + BlockwiseMcpServer.HOST + ":" + server.port())
@@ -99,14 +167,30 @@ class BlockwiseMcpServerTest {
             assertTrue(
                     description instanceof String text && !text.isBlank(),
                     propertyPath + " has no description");
-            if (propertySchema.containsKey("properties")) {
-                assertPropertyDescriptions(propertyPath, propertySchema);
-            }
-            if (propertySchema.get("items") instanceof Map<?, ?> itemSchema
-                    && itemSchema.containsKey("properties")) {
-                assertPropertyDescriptions(propertyPath + "[]", asMap(itemSchema));
+            assertNestedPropertyDescriptions(propertyPath, propertySchema);
+        }
+    }
+
+    private static void assertNestedPropertyDescriptions(String path, Map<String, Object> schema) {
+        if (schema.containsKey("properties")) {
+            assertPropertyDescriptions(path, schema);
+        }
+        if (schema.get("items") instanceof Map<?, ?> itemSchema) {
+            assertNestedPropertyDescriptions(path + "[]", asMap(itemSchema));
+        }
+        if (schema.get("oneOf") instanceof List<?> variants) {
+            for (var index = 0; index < variants.size(); index++) {
+                assertNestedPropertyDescriptions(path + ".oneOf[" + index + "]", asMap(variants.get(index)));
             }
         }
+    }
+
+    private static RecipeDefinition recipe(String id, RecipeInput input, ResourceId outputId) {
+        return new RecipeDefinition(
+                ResourceId.parse(id),
+                ResourceId.parse("minecraft:test_serializer"),
+                input,
+                List.of(new RecipeOutput(outputId, 1)));
     }
 
     private static String firstItemId(Map<String, Object> output) {

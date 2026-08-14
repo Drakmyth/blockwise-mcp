@@ -4,7 +4,7 @@ An embedded MCP server for querying authoritative data from a running modded Min
 
 ## Status
 
-Blockwise MCP is an early, functional implementation for NeoForge on Minecraft 1.21.1. It currently exposes loaded-mod metadata from integrated single-player sessions. Public releases and recipe tools are not yet available.
+Blockwise MCP is an early, functional implementation for NeoForge on Minecraft 1.21.1. It exposes loaded-mod metadata and statically representable recipes from integrated single-player sessions. Public releases are not yet available.
 
 ## Current capabilities
 
@@ -12,6 +12,7 @@ Blockwise MCP is an early, functional implementation for NeoForge on Minecraft 1
 - Endpoint lifecycle tied to the active Minecraft server/world
 - Configurable enablement, port, and server-thread dispatch timeout
 - `list_loaded_mods` with filtering, stable ordering, and cursor pagination
+- `find_recipes_by_output` for shaped, shapeless, cooking, and stonecutting recipes with static component-free outputs
 - Compatibility validation across NeoForge `[21.1.1,21.2)`
 
 The endpoint is localhost-only and starts after entering a single-player world. Its production JAR is built against NeoForge 21.1.1 and tested on both the minimum and a recent NeoForge 21.1 runtime.
