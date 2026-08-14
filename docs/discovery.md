@@ -28,7 +28,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Its GameTest verifies Blockwise metadata end to end: ID, display name, and project version.
 - The following milestone adds `ModService.listLoadedMods(ListLoadedModsRequest)` with filtering, stable sorting, and cursor pagination, without MCP transport.
 - Keep loaded-mod domain types under `core.mods`; retain `LoadedMod` as the sole metadata model until broader reuse justifies `ModMetadata`.
-- Extract a separate MCP server module only when another deployment requires it.
+- Keep loader-independent MCP transport and tool mapping in an `mcp-server` module; NeoForge composes it with runtime sources and owns endpoint lifecycle.
 - Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
 - Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
 - Defer CI and Gradle setup until the first functional module provides a meaningful build and tests.
@@ -41,14 +41,22 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Offline modpack inspection is deferred, but not ruled out.
 - Integrated single-player is the first-priority runtime environment.
 - Multiplayer and dedicated-server support should remain on the roadmap.
-- The MCP transport will be network-based rather than stdio-oriented.
-- Initial releases will bind to localhost by default.
+- The MCP transport will use Streamable HTTP only; legacy HTTP+SSE and stdio are not initially supported.
+- Use the official MCP Java SDK rather than implementing the protocol directly; pin and audit its dependencies for the embedded Minecraft environment.
+- Initial releases bind strictly to `127.0.0.1`; the port is configurable and defaults to `47831`.
+- Keep the Streamable HTTP path fixed at `/mcp`; coexistence with other embedded MCP mods is handled through port configuration.
+- Initial endpoint configuration contains only `enabled`, `port`, and `dispatchTimeoutSeconds`.
+- Investigate enforcing a fixed maximum HTTP request-body size rather than exposing it as initial configuration.
 - Public remote access is deferred until authentication, authorization, transport security, resource limits, and related threats have an explicit design.
 - The highest-value initial data categories are:
   1. Loaded mods
   2. Recipes
 - Expose focused, single-purpose MCP tools rather than a generic data-query tool.
 - Initial tools: `list_loaded_mods` and `find_recipes_by_output`.
+- The next milestone delivers `list_loaded_mods` end to end through the localhost MCP endpoint before recipe implementation.
+- Run the MCP endpoint only while a Minecraft server/world is active.
+- Dispatch MCP tool work through the Minecraft server thread with a bounded, configurable timeout.
+- MCP startup failure does not stop Minecraft; disable MCP for that server session and log a clear error without automatic retries.
 - Successful tool responses use structured data without a redundant human-readable summary, subject to MCP client compatibility.
 - Provisional: errors include stable machine-readable codes, concise messages, and retry guidance when applicable.
 - Do not encode contract versions in tool names.
@@ -116,7 +124,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - How should an extensible, structured context represent machine settings and other type-specific recipe data?
 - How should custom and dynamic recipes report information that cannot be represented faithfully?
 - Should later loaded-mod results include metadata such as dependencies and source information?
-- Which MCP network transport and protocol version should be supported?
+- Which MCP protocol version should the initial Streamable HTTP implementation pin?
+- Future: allow in-game port changes and explicit MCP start/retry controls; provide a non-UI equivalent for dedicated servers.
 - What lifecycle and consistency guarantees should apply during datapack reloads?
 - Which testing and documentation conventions should be adopted?
 - How should MCP tools and resources expose recipe data?

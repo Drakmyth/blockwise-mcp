@@ -9,4 +9,4 @@ plugins {
 }
 
 rootProject.name = 'blockwise-mcp'
-include 'core', 'neoforge-1.21.1'
+include 'core', 'mcp-server', 'neoforge-1.21.1'
