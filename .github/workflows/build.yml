@@ -57,7 +57,7 @@ jobs:
 
             - name: Build against minimum NeoForge
               if: needs.changes.outputs.required == 'true'
-              run: ./gradlew build
+              run: ./gradlew :core:build :mcp-server:build :neoforge-1.21.1:build
 
             - name: Upload distributable mod
               if: needs.changes.outputs.required == 'true'
