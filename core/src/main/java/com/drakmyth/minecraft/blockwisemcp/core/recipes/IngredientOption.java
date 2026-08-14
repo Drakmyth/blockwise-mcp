@@ -7,6 +7,9 @@ import java.util.Objects;
 public sealed interface IngredientOption permits IngredientOption.Item, IngredientOption.Tag {
     ResourceId id();
 
+    /** Returns the canonical item ID or {@code #}-prefixed item-tag selector. */
+    String selector();
+
     /** Parses an item ID or a {@code #}-prefixed item-tag ID. */
     static IngredientOption parse(String value) {
         Objects.requireNonNull(value, "value");
@@ -21,7 +24,7 @@ public sealed interface IngredientOption permits IngredientOption.Item, Ingredie
         }
 
         @Override
-        public String toString() {
+        public String selector() {
             return id.toString();
         }
     }
@@ -32,7 +35,7 @@ public sealed interface IngredientOption permits IngredientOption.Item, Ingredie
         }
 
         @Override
-        public String toString() {
+        public String selector() {
             return "#" + id;
         }
     }

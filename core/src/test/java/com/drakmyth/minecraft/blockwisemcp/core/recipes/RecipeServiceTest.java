@@ -85,8 +85,8 @@ class RecipeServiceTest {
         var ingredient = new RecipeIngredient(mutableOptions);
         mutableOptions.clear();
         assertEquals(List.of(item, tag), ingredient.options());
-        assertEquals("minecraft:coal", item.toString());
-        assertEquals("#c:coals", tag.toString());
+        assertEquals("minecraft:coal", item.selector());
+        assertEquals("#c:coals", tag.selector());
         assertThrows(IllegalArgumentException.class, () -> IngredientOption.parse("coals"));
 
         var row = new ArrayList<RecipeIngredient>();
