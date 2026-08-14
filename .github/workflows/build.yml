@@ -68,6 +68,7 @@ jobs:
                   name: blockwise-mod
                   path: neoforge-1.21.1/build/libs/*.jar
                   if-no-files-found: error
+                  overwrite: true
 
     validation:
         name: validation (${{ matrix.target }})
