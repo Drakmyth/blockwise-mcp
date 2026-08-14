@@ -45,6 +45,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Use the official MCP Java SDK rather than implementing the protocol directly; pin and audit its dependencies for the embedded Minecraft environment.
 - Bundle MCP runtime dependencies inside the `mcp-server` library because some dependency module metadata is incompatible with NeoForge's module layer.
 - Preserve SDK JSON Schema validation by repackaging networknt's root schema resources under a Java package and using a scoped module-compatible resource loader.
+- Follow up with SecureJarHandler upstream: non-package resources in a readable parent-layer module are not found by its fallback resource search; prepare a minimal reproduction before reporting.
 - Initial releases bind strictly to `127.0.0.1`; the port is configurable and defaults to `47831`.
 - Keep the Streamable HTTP path fixed at `/mcp`; coexistence with other embedded MCP mods is handled through port configuration.
 - Initial endpoint configuration contains only `enabled`, `port`, and `dispatchTimeoutSeconds`.
