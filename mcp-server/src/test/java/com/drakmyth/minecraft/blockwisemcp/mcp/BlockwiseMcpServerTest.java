@@ -36,11 +36,13 @@ class BlockwiseMcpServerTest {
 
             var listedTools = client.listTools();
             assertEquals(List.of("list_loaded_mods"), listedTools.tools().stream().map(tool -> tool.name()).toList());
-            var outputProperties = asMap(listedTools.tools().getFirst().outputSchema().get("properties"));
-            assertEquals("Loaded mods in this page", asMap(outputProperties.get("items")).get("description"));
-            assertEquals(
-                    "Opaque cursor for the next page, or null when no more mods remain",
-                    asMap(outputProperties.get("nextCursor")).get("description"));
+            var listedTool = listedTools.tools().getFirst();
+            var inputProperties = asMap(listedTool.inputSchema().get("properties"));
+            assertDescriptions(inputProperties, "filter", "limit", "cursor");
+            var outputProperties = asMap(listedTool.outputSchema().get("properties"));
+            assertDescriptions(outputProperties, "items", "nextCursor");
+            var itemSchema = asMap(asMap(outputProperties.get("items")).get("items"));
+            assertDescriptions(asMap(itemSchema.get("properties")), "id", "displayName", "version");
 
             var first = client.callTool(CallToolRequest.builder("list_loaded_mods")
                     .arguments(Map.of("limit", 1))
@@ -74,6 +76,13 @@ class BlockwiseMcpServerTest {
     @SuppressWarnings("unchecked")
     private static Map<String, Object> asMap(Object value) {
         return (Map<String, Object>) value;
+    }
+
+    private static void assertDescriptions(Map<String, Object> properties, String... names) {
+        for (var name : names) {
+            var description = asMap(properties.get(name)).get("description");
+            assertTrue(description instanceof String text && !text.isBlank(), name + " has no description");
+        }
     }
 
     private static String firstItemId(Map<String, Object> output) {
