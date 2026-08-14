@@ -36,6 +36,11 @@ class BlockwiseMcpServerTest {
 
             var listedTools = client.listTools();
             assertEquals(List.of("list_loaded_mods"), listedTools.tools().stream().map(tool -> tool.name()).toList());
+            var outputProperties = asMap(listedTools.tools().getFirst().outputSchema().get("properties"));
+            assertEquals("Loaded mods in this page", asMap(outputProperties.get("items")).get("description"));
+            assertEquals(
+                    "Opaque cursor for the next page, or null when no more mods remain",
+                    asMap(outputProperties.get("nextCursor")).get("description"));
 
             var first = client.callTool(CallToolRequest.builder("list_loaded_mods")
                     .arguments(Map.of("limit", 1))

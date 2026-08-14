@@ -71,6 +71,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - `LoadedMod` requires non-null ID, display name, and version while preserving their loader-reported string contents exactly.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
+- Paginated tool outputs use the generic `items` and `nextCursor` fields; schema descriptions provide the tool-specific meaning without changing the shared envelope.
 - Collection queries default to 20 results and allow at most 100 results per page.
 - Loaded-mod filtering uses case-insensitive substring matching over mod ID and display name; version is not searchable.
 - Filtering strategies are dataset-specific. Retain the simple loaded-mod filter now, but do not default larger collections to full-scan substring matching without revisiting indexing and structured filters.

@@ -27,6 +27,7 @@ public final class ListLoadedModsTool {
             "properties", Map.of(
                     "items", Map.of(
                             "type", "array",
+                            "description", "Loaded mods in this page",
                             "items", Map.of(
                                     "type", "object",
                                     "properties", Map.of(
@@ -35,7 +36,9 @@ public final class ListLoadedModsTool {
                                             "version", Map.of("type", "string")),
                                     "required", List.of("id", "displayName", "version"),
                                     "additionalProperties", false)),
-                    "nextCursor", Map.of("type", List.of("string", "null"))),
+                    "nextCursor", Map.of(
+                            "type", List.of("string", "null"),
+                            "description", "Opaque cursor for the next page, or null when no more mods remain")),
             "required", List.of("items", "nextCursor"),
             "additionalProperties", false);
 
