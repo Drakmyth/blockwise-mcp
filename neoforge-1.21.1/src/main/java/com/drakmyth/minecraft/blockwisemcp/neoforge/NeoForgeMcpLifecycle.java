@@ -33,11 +33,11 @@ public final class NeoForgeMcpLifecycle {
         }
 
         var timeout = config.dispatchTimeout();
-        var service = new ModService(new NeoForgeLoadedModSource(), UUID.randomUUID());
+        var modService = new ModService(new NeoForgeLoadedModSource(), UUID.randomUUID());
         recipeSource = new NeoForgeRecipeSource(event.getServer());
         recipeService = new RecipeService(recipeSource);
         var executor = new MinecraftServerToolExecutor(event.getServer(), timeout);
-        var tools = List.of(ListLoadedModsTool.create(service, executor));
+        var tools = List.of(ListLoadedModsTool.create(modService, executor));
         try {
             mcpServer = BlockwiseMcpServer.start(config.port(), timeout, version, tools);
             logger.info("Blockwise MCP endpoint started at http://127.0.0.1:{}/mcp", mcpServer.port());
