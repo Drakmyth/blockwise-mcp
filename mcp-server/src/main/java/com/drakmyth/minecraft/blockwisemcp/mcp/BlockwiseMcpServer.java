@@ -107,6 +107,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
 
     private static Tomcat createTomcat(
             int port, HttpServletStreamableServerTransportProvider transport, Path baseDirectory) {
+        // Avoid installing Tomcat's unused WAR/classpath URL handlers as JVM-global state.
         TomcatURLStreamHandlerFactory.disable();
         var tomcat = new Tomcat();
         tomcat.setBaseDir(baseDirectory.toString());
