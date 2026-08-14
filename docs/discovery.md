@@ -43,7 +43,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Multiplayer and dedicated-server support should remain on the roadmap.
 - The MCP transport will use Streamable HTTP only; legacy HTTP+SSE and stdio are not initially supported.
 - Use the official MCP Java SDK rather than implementing the protocol directly; pin and audit its dependencies for the embedded Minecraft environment.
-- Initial releases will bind to localhost by default.
+- Initial releases bind strictly to `127.0.0.1`, with a configurable port and documented default.
 - Public remote access is deferred until authentication, authorization, transport security, resource limits, and related threats have an explicit design.
 - The highest-value initial data categories are:
   1. Loaded mods
@@ -51,6 +51,9 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Expose focused, single-purpose MCP tools rather than a generic data-query tool.
 - Initial tools: `list_loaded_mods` and `find_recipes_by_output`.
 - The next milestone delivers `list_loaded_mods` end to end through the localhost MCP endpoint before recipe implementation.
+- Run the MCP endpoint only while a Minecraft server/world is active.
+- Dispatch MCP tool work through the Minecraft server thread with a bounded, configurable timeout.
+- MCP startup failure does not stop Minecraft; disable MCP for that server session and log a clear error without automatic retries.
 - Successful tool responses use structured data without a redundant human-readable summary, subject to MCP client compatibility.
 - Provisional: errors include stable machine-readable codes, concise messages, and retry guidance when applicable.
 - Do not encode contract versions in tool names.
@@ -118,7 +121,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - How should an extensible, structured context represent machine settings and other type-specific recipe data?
 - How should custom and dynamic recipes report information that cannot be represented faithfully?
 - Should later loaded-mod results include metadata such as dependencies and source information?
-- Which MCP network transport and protocol version should be supported?
+- Which MCP protocol version should the initial Streamable HTTP implementation pin?
+- Future: allow in-game port changes and explicit MCP start/retry controls; provide a non-UI equivalent for dedicated servers.
 - What lifecycle and consistency guarantees should apply during datapack reloads?
 - Which testing and documentation conventions should be adopted?
 - How should MCP tools and resources expose recipe data?
