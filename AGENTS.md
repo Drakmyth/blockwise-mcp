@@ -9,7 +9,9 @@
 - Challenge assumptions, gaps, and weak reasoning; do not accept answers uncritically.
 - Keep responses and project documentation concise.
 - Use ASCII punctuation instead of equivalent Unicode punctuation.
+- Add concise Javadocs to public APIs when behavior, defaults, validation, lifecycle, ordering, or failures are not obvious. Avoid redundant documentation.
 - Work on dedicated branches; commit and push focused changes as work progresses.
+- Open the pull request directly after completing and validating an implementation phase.
 - Keep each pull request buildable, deployable, focused, and ideally at or below 350 changed lines.
 - When requesting PR review, provide a squash message with an optional one-line overview followed by a high-value commit log. Preserve meaningful delivered detail; omit or reword redundant entries.
 - End squash messages with `Co-authored-by: Codex <codex@openai.com>`.

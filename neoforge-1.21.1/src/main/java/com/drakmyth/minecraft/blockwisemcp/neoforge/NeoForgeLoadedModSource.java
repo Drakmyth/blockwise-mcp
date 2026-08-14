@@ -1,7 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.neoforge;
 
-import com.drakmyth.minecraft.blockwisemcp.core.LoadedMod;
-import com.drakmyth.minecraft.blockwisemcp.core.LoadedModSource;
+import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
+import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedModSource;
 import java.util.List;
 import net.neoforged.fml.ModList;
 

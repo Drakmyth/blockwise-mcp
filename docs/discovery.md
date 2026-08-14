@@ -26,6 +26,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - After validating the runtime, use two Gradle modules: a Minecraft-independent `core` and a `neoforge-1.21.1` module containing the adapter, embedded MCP transport, and mod entry point.
 - The next milestone adds a minimal loaded-mod contract in `core`, a NeoForge implementation, and GameTest coverage without MCP transport.
 - Its GameTest verifies Blockwise metadata end to end: ID, display name, and project version.
+- The following milestone adds `ModService.listLoadedMods(ListLoadedModsRequest)` with filtering, stable sorting, and cursor pagination, without MCP transport.
+- Keep loaded-mod domain types under `core.mods`; retain `LoadedMod` as the sole metadata model until broader reuse justifies `ModMetadata`.
 - Extract a separate MCP server module only when another deployment requires it.
 - Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
 - Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
@@ -57,9 +59,20 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - `LoadedMod` requires non-null ID, display name, and version while preserving their loader-reported string contents exactly.
 - Loaded-mod data lets AI clients scope answers and external research to mods and versions active in the current session.
 - All collection-returning tools use a consistent cursor-based pagination contract, including loaded-mod listing.
+- Collection queries default to 20 results and allow at most 100 results per page.
+- Loaded-mod filtering uses case-insensitive substring matching over mod ID and display name; version is not searchable.
+- Filtering strategies are dataset-specific. Retain the simple loaded-mod filter now, but do not default larger collections to full-scan substring matching without revisiting indexing and structured filters.
+- Large datasets may require query-capable sources or indexes so filtering, ordering, and pagination occur without full materialization.
+- Omitted or blank loaded-mod filters match all mods.
+- Page limits outside 1 through 100 fail as invalid input rather than being silently clamped.
 - Each tool defines a fixed stable ordering; client-selected sorting is not initially supported.
+- Loaded-mod results sort by mod ID using natural string order.
 - Runtime sources return immutable per-call lists in loader order; query and pagination services own stable sorting. Do not add ordering flags before measurement justifies them.
-- Provisional: cursors carry a dataset generation and fail explicitly when a reload makes them stale.
+- Collection tools share one opaque cursor envelope containing format version, dataset generation, query identity, and position.
+- Unsupported cursor format versions fail explicitly, including when a cursor spans an application upgrade.
+- Cursors fail explicitly when their dataset generation is stale or their query identity does not match the request.
+- Sources with static lifecycle data, such as loaded mods, may retain one generation for the process lifetime.
+- Revisit generation ownership before adding reloadable datasets; services should follow one consistent generation pattern where practical.
 - The first recipe operation should find recipes that produce a specified item.
 - Recipe output lookup requires an exact namespaced item ID. Human-readable item search will be a separate operation.
 - Initial recipe results will not include raw serialized recipes.

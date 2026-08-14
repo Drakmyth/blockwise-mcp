@@ -1,4 +1,4 @@
-package com.drakmyth.minecraft.blockwisemcp.core;
+package com.drakmyth.minecraft.blockwisemcp.core.mods;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
