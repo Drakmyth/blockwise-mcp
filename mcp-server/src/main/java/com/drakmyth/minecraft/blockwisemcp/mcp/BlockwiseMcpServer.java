@@ -62,7 +62,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
         var mcpServer = McpServer.sync(transport)
                 .serverInfo("blockwise-mcp", version)
                 .capabilities(ServerCapabilities.builder().tools(false).build())
-                .tools(LoadedModsTool.create(modService, executor))
+                .tools(ListLoadedModsTool.create(modService, executor))
                 .requestTimeout(requestTimeout)
                 .build();
         var baseDirectory = Files.createTempDirectory("blockwise-mcp-");

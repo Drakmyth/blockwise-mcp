@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-final class LoadedModsTool {
+final class ListLoadedModsTool {
     private static final Map<String, Object> INPUT_SCHEMA = Map.of(
             "type", "object",
             "properties", Map.of(
@@ -37,7 +37,7 @@ final class LoadedModsTool {
             "required", List.of("items", "nextCursor"),
             "additionalProperties", false);
 
-    private LoadedModsTool() {
+    private ListLoadedModsTool() {
     }
 
     static SyncToolSpecification create(ModService service, McpToolExecutor executor) {
@@ -58,7 +58,7 @@ final class LoadedModsTool {
                     arguments.get("limit") instanceof Number limit ? limit.intValue() : null,
                     (String) arguments.get("cursor"));
             var page = executor.execute(() -> service.listLoadedMods(request));
-            var items = page.items().stream().map(LoadedModsTool::toMap).toList();
+            var items = page.items().stream().map(ListLoadedModsTool::toMap).toList();
             var output = new LinkedHashMap<String, Object>();
             output.put("items", items);
             output.put("nextCursor", page.nextCursor());
