@@ -36,33 +36,13 @@ jobs:
                   done < <(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}")
                   echo "required=$required" >> "$GITHUB_OUTPUT"
 
-    validation:
-        name: validation (${{ matrix.target }})
+    build:
         needs: changes
-        strategy:
-            fail-fast: false
-            matrix:
-                target:
-                    - minimum
-                    - latest
         runs-on: ubuntu-latest
         steps:
             - name: Check out repository
               if: needs.changes.outputs.required == 'true'
               uses: actions/checkout@v7
-
-            - name: Select NeoForge version
-              if: needs.changes.outputs.required == 'true'
-              id: neoforge
-              shell: bash
-              run: |
-                  if [[ "${{ matrix.target }}" == "minimum" ]]; then
-                      property=neo_version
-                  else
-                      property=neo_latest_version
-                  fi
-                  version=$(grep "^$property=" gradle.properties | cut -d= -f2-)
-                  echo "version=$version" >> "$GITHUB_OUTPUT"
 
             - name: Set up Java 21
               if: needs.changes.outputs.required == 'true'
@@ -76,9 +56,74 @@ jobs:
               uses: gradle/actions/setup-gradle@v6
 
             - name: Build against minimum NeoForge
-              if: needs.changes.outputs.required == 'true' && matrix.target == 'minimum'
-              run: ./gradlew build -Pneo_version=${{ steps.neoforge.outputs.version }}
-
-            - name: Run GameTests
               if: needs.changes.outputs.required == 'true'
-              run: ./gradlew :neoforge-1.21.1:runGameTestServer -Pneo_version=${{ steps.neoforge.outputs.version }}
+              run: ./gradlew build
+
+            - name: Upload distributable mod
+              if: needs.changes.outputs.required == 'true'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: blockwise-mod
+                  path: neoforge-1.21.1/build/libs/*.jar
+                  if-no-files-found: error
+
+    validation:
+        name: validation (${{ matrix.target }})
+        needs:
+            - changes
+            - build
+        strategy:
+            fail-fast: false
+            matrix:
+                target:
+                    - minimum
+                    - latest
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository
+              if: needs.changes.outputs.required == 'true'
+              uses: actions/checkout@v7
+
+            - name: Download distributable mod
+              if: needs.changes.outputs.required == 'true'
+              uses: actions/download-artifact@v4
+              with:
+                  name: blockwise-mod
+                  path: compatibility-artifact
+
+            - name: Select compatibility inputs
+              if: needs.changes.outputs.required == 'true'
+              id: compatibility
+              shell: bash
+              run: |
+                  if [[ "${{ matrix.target }}" == "minimum" ]]; then
+                      property=neo_version
+                  else
+                      property=neo_latest_version
+                  fi
+                  version=$(grep "^$property=" gradle.properties | cut -d= -f2-)
+                  mod_jar=$(find compatibility-artifact -name '*.jar' -type f -print -quit)
+                  echo "neoforge_version=$version" >> "$GITHUB_OUTPUT"
+                  echo "mod_jar=$GITHUB_WORKSPACE/$mod_jar" >> "$GITHUB_OUTPUT"
+
+            - name: Set up Java 21
+              if: needs.changes.outputs.required == 'true'
+              uses: actions/setup-java@v5
+              with:
+                  distribution: temurin
+                  java-version: '21'
+
+            - name: Set up Gradle
+              if: needs.changes.outputs.required == 'true'
+              uses: gradle/actions/setup-gradle@v6
+
+            - name: Run packaged-mod GameTests
+              if: needs.changes.outputs.required == 'true'
+              shell: bash
+              run: |
+                  set -o pipefail
+                  ./gradlew :neoforge-compatibility-test:runGameTestServer \
+                      -Pneo_test_version=${{ steps.compatibility.outputs.neoforge_version }} \
+                      -Pblockwise_mod_jar=${{ steps.compatibility.outputs.mod_jar }} \
+                      | tee gametest.log
+                  grep -E 'All [1-9][0-9]* required tests passed :\)' gametest.log
