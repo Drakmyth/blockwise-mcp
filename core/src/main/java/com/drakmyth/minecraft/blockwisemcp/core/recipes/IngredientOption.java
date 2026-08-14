@@ -36,7 +36,7 @@ public sealed interface IngredientOption permits IngredientOption.Item, Ingredie
 
         @Override
         public String selector() {
-            return "#" + id;
+            return "#" + id.toString();
         }
     }
 }
