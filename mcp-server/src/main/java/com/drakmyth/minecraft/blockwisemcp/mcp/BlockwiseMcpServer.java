@@ -1,7 +1,6 @@
 package com.drakmyth.minecraft.blockwisemcp.mcp;
 
-import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
-import com.drakmyth.minecraft.blockwisemcp.mcp.tools.ListLoadedModsTool;
+import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.DefaultServerTransportSecurityValidator;
@@ -11,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -42,15 +42,13 @@ public final class BlockwiseMcpServer implements AutoCloseable {
             int port,
             Duration requestTimeout,
             String version,
-            ModService modService,
-            McpToolExecutor executor) throws IOException, LifecycleException {
+            List<SyncToolSpecification> tools) throws IOException, LifecycleException {
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("port must be between 0 and 65535");
         }
         Objects.requireNonNull(requestTimeout, "requestTimeout");
         Objects.requireNonNull(version, "version");
-        Objects.requireNonNull(modService, "modService");
-        Objects.requireNonNull(executor, "executor");
+        tools = List.copyOf(Objects.requireNonNull(tools, "tools"));
 
         var security = DefaultServerTransportSecurityValidator.builder()
                 .allowedHost(HOST + ":*")
@@ -63,7 +61,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
         var mcpServer = McpServer.sync(transport)
                 .serverInfo("blockwise-mcp", version)
                 .capabilities(ServerCapabilities.builder().tools(false).build())
-                .tools(ListLoadedModsTool.create(modService, executor))
+                .tools(tools)
                 .requestTimeout(requestTimeout)
                 .build();
         var baseDirectory = Files.createTempDirectory("blockwise-mcp-");
