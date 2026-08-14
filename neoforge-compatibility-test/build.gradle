@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'net.neoforged.moddev' version '2.0.143'
+}
+
+var blockwiseModJar = providers.gradleProperty('blockwise_mod_jar')
+        .map { rootProject.file(it) }
+        .orElse(layout.projectDirectory.file('missing-blockwise-mod.jar').asFile)
+
+dependencies {
+    runtimeOnly files(blockwiseModJar)
+}
+
+neoForge {
+    version = project.findProperty('neo_test_version') ?: project.neo_version
+
+    runs {
+        gameTestServer {
+            type = 'gameTestServer'
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'blockwisemcp'
+            systemProperty 'blockwise.test.expectedVersion', project.version.toString()
+        }
+    }
+}
+
+var generateGameTestServerProperties = tasks.register('generateGameTestServerProperties') {
+    var outputFile = layout.projectDirectory.file('run/server.properties')
+    outputs.file outputFile
+
+    doLast {
+        outputFile.asFile.parentFile.mkdirs()
+        outputFile.asFile.text = 'online-mode=false\n'
+    }
+}
+
+tasks.named('runGameTestServer') {
+    dependsOn generateGameTestServerProperties
+    doFirst {
+        if (!blockwiseModJar.get().isFile()) {
+            throw new GradleException('Set -Pblockwise_mod_jar to a packaged Blockwise mod JAR')
+        }
+    }
+}

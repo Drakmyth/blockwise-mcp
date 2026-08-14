@@ -16,7 +16,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Keep root Gradle configuration loader-neutral.
 - Use NeoForge's official Minecraft 1.21.1 ModDevGradle template only as a reference for an isolated NeoForge module.
 - Pin exact Gradle, ModDevGradle, and NeoForge build versions; update them explicitly.
-- Require Minecraft 1.21.1 exactly and allow compatible NeoForge runtime versions in `[21.1.244,21.2)`.
+- Require Minecraft 1.21.1 exactly and support NeoForge runtime versions in `[21.1.1,21.2)`.
+- Build the distributable mod against NeoForge 21.1.1, then run that exact artifact in GameTests against both 21.1.1 and a pinned recent 21.1.x release; update the recent-version pin periodically.
 - Use NeoForge's default official Mojang mappings for 1.21.1; avoid Parchment unless its added documentation becomes necessary.
 - Establish a minimal NeoForge 1.21.1 mod and development environment before extracting the Minecraft-independent `core` module.
 - The first functional milestone proves the mod loads in development and CI, without MCP or registry-query functionality.
@@ -97,7 +98,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Prioritize fast tests for core contracts and services, supplemented by focused NeoForge integration tests for runtime extraction and lifecycle behavior.
 - Provisional: pull requests to `master` must pass both core and NeoForge integration tests; avoid duplicate CI on ordinary branch pushes.
 - GitHub Actions on Linux is the authoritative CI environment; local Windows development remains supported.
-- Keep the required Build check successful for documentation-only pull requests while skipping Java, Gradle, and GameTest setup when every changed path is under `docs/` or is a Markdown file.
+- Require the stable `build`, `validation (minimum)`, and `validation (latest)` checks; build once before running packaged-mod validation in parallel, and skip expensive work when every changed path is under `docs/` or is a Markdown file.
 - Query live Minecraft managers initially; add snapshots only if measurement justifies their startup and lifecycle cost.
 - Schedule bounded data extraction on Minecraft's server thread when required by API thread-safety; serialize responses off-thread.
 - Fail requests explicitly when the game runtime is unavailable or bounded server-thread work times out.

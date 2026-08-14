@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.TomcatURLStreamHandlerFactory;
 
@@ -113,6 +114,12 @@ public final class BlockwiseMcpServer implements AutoCloseable {
         tomcat.setBaseDir(baseDirectory.toString());
         tomcat.setPort(port);
         Context context = tomcat.addContext("", baseDirectory.toString());
+        // Keep Tomcat's packaged cleanup helper visible through NeoForge's module layers.
+        context.setParentClassLoader(BlockwiseMcpServer.class.getClassLoader());
+        var standardContext = (StandardContext) context;
+        // These webapp leak scans are unnecessary and require JVM module opens.
+        standardContext.setClearReferencesThreadLocals(false);
+        standardContext.setClearReferencesRmiTargets(false);
         var wrapper = context.createWrapper();
         wrapper.setName("mcp");
         wrapper.setServlet(transport);
