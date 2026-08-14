@@ -49,6 +49,10 @@ jobs:
               if: steps.changes.outputs.required == 'true'
               run: ./gradlew build
 
-            - name: Run GameTests
+            - name: Run GameTests on minimum NeoForge
               if: steps.changes.outputs.required == 'true'
               run: ./gradlew :neoforge-1.21.1:runGameTestServer
+
+            - name: Run GameTests on latest supported NeoForge
+              if: steps.changes.outputs.required == 'true'
+              run: ./gradlew :neoforge-1.21.1:runGameTestServer -Pneo_version=$(grep '^neo_latest_version=' gradle.properties | cut -d= -f2-)

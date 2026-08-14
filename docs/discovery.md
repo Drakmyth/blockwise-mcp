@@ -16,7 +16,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Keep root Gradle configuration loader-neutral.
 - Use NeoForge's official Minecraft 1.21.1 ModDevGradle template only as a reference for an isolated NeoForge module.
 - Pin exact Gradle, ModDevGradle, and NeoForge build versions; update them explicitly.
-- Require Minecraft 1.21.1 exactly and allow compatible NeoForge runtime versions in `[21.1.244,21.2)`.
+- Require Minecraft 1.21.1 exactly and support NeoForge runtime versions in `[21.1.1,21.2)`.
+- Compile and run primary validation against NeoForge 21.1.1; run an additional GameTest against a pinned recent 21.1.x release and update that pin periodically.
 - Use NeoForge's default official Mojang mappings for 1.21.1; avoid Parchment unless its added documentation becomes necessary.
 - Establish a minimal NeoForge 1.21.1 mod and development environment before extracting the Minecraft-independent `core` module.
 - The first functional milestone proves the mod loads in development and CI, without MCP or registry-query functionality.
