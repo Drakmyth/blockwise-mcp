@@ -43,7 +43,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Multiplayer and dedicated-server support should remain on the roadmap.
 - The MCP transport will use Streamable HTTP only; legacy HTTP+SSE and stdio are not initially supported.
 - Use the official MCP Java SDK rather than implementing the protocol directly; pin and audit its dependencies for the embedded Minecraft environment.
-- Initial releases bind strictly to `127.0.0.1`, with a configurable port and documented default.
+- Initial releases bind strictly to `127.0.0.1`; the port is configurable and defaults to `47831`.
 - Public remote access is deferred until authentication, authorization, transport security, resource limits, and related threats have an explicit design.
 - The highest-value initial data categories are:
   1. Loaded mods
