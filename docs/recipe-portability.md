@@ -100,9 +100,9 @@ A universal reflection-based normalizer is not a reliable design.
 Recipes are datapack-reloadable, so cursor generation cannot remain constant for the process lifetime.
 
 - Fabric API exposes `ServerLifecycleEvents.END_DATA_PACK_RELOAD`, including success state.
-- NeoForge exposes reload listener and datapack synchronization events, but this reconnaissance did not establish a direct end-of-successful-server-reload event equivalent.
+- NeoForge posts `TagsUpdatedEvent` with cause `SERVER_DATA_LOAD` after a successful load has replaced `ReloadableServerResources` and rebound registry tags. Failed reloads do not reach that publication point.
 
-The NeoForge generation hook remains an implementation question. A generation must advance only after a successful recipe snapshot becomes authoritative. Requests and pagination must not cross generations silently.
+The NeoForge adapter can advance its generation from that server-data event. Requests and pagination must not cross generations silently.
 
 ### Threading
 
@@ -129,8 +129,6 @@ The source contract should expose a coherent snapshot or generation-bearing resu
 - Outputs expose item ID and count. Component-bearing outputs are deferred.
 - Recipe serializer ID is the public type, and results sort naturally by recipe ID.
 - Recipe generations use opaque per-session UUID tokens and change after every successful datapack reload.
-
-The remaining implementation question is how NeoForge detects and publishes a successful authoritative recipe reload.
 
 ## Conclusion
 

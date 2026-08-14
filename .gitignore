@@ -10,6 +10,7 @@ build/
 .project
 .settings/
 .vscode/
+**/bin/
 
 # Runtime and logs
 run/

@@ -70,6 +70,8 @@ Provide AI clients with structured access to authoritative data from a running m
 - Initial outputs contain `itemId` and `count`; exclude outputs with non-default data components.
 - Do not expose raw serialized recipes initially.
 - Advance recipe generation after each successful datapack reload and reject cursors from older generations.
+- On NeoForge 1.21.1, treat `TagsUpdatedEvent` with cause `SERVER_DATA_LOAD` as successful reload publication: Minecraft has already replaced its authoritative resources and rebound tags before the event is posted.
+- Extract standard NeoForge ingredient values through `Ingredient.getValues()`; exclude ingredients for which `Ingredient.isCustom()` is true.
 - Keep loader-specific custom ingredient, registration, and reload mechanisms behind adapters; detailed findings are in [recipe portability reconnaissance](recipe-portability.md).
 - The release-ready contract must represent common modded semantics; exotic or dynamic semantics may follow.
 
@@ -105,7 +107,6 @@ Provide AI clients with structured access to authoritative data from a running m
 - Is `Blockwise MCP` sufficiently available and compliant with Minecraft branding guidance?
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
-- How should NeoForge detect and publish a successful recipe-generation change after datapack reload?
 - How should type-specific recipe context, custom recipes, and dynamic recipes report semantics that cannot be represented faithfully?
 - Should loaded-mod results later include dependencies or source information?
 - Which MCP protocol version should the first release pin?

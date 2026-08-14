@@ -1,10 +1,12 @@
 package com.drakmyth.minecraft.blockwisemcp.neoforge;
 
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
+import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeService;
 import com.drakmyth.minecraft.blockwisemcp.mcp.BlockwiseMcpServer;
 import com.drakmyth.minecraft.blockwisemcp.mcp.tools.ListLoadedModsTool;
 import java.util.List;
 import java.util.UUID;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.slf4j.Logger;
@@ -15,6 +17,8 @@ public final class NeoForgeMcpLifecycle {
     private final String version;
     private final BlockwiseConfig config;
     private BlockwiseMcpServer mcpServer;
+    private NeoForgeRecipeSource recipeSource;
+    private RecipeService recipeService;
 
     public NeoForgeMcpLifecycle(Logger logger, String version, BlockwiseConfig config) {
         this.logger = logger;
@@ -30,6 +34,8 @@ public final class NeoForgeMcpLifecycle {
 
         var timeout = config.dispatchTimeout();
         var service = new ModService(new NeoForgeLoadedModSource(), UUID.randomUUID());
+        recipeSource = new NeoForgeRecipeSource(event.getServer());
+        recipeService = new RecipeService(recipeSource);
         var executor = new MinecraftServerToolExecutor(event.getServer(), timeout);
         var tools = List.of(ListLoadedModsTool.create(service, executor));
         try {
@@ -40,20 +46,28 @@ public final class NeoForgeMcpLifecycle {
         }
     }
 
+    /** Invalidates recipe cursors after NeoForge publishes a successful server-data reload. */
+    public void tagsUpdated(TagsUpdatedEvent event) {
+        if (recipeSource != null && event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD) {
+            recipeSource.advanceGeneration();
+        }
+    }
+
     public boolean isRunning() {
         return mcpServer != null;
     }
 
     public void serverStopping(ServerStoppingEvent event) {
-        if (mcpServer == null) {
-            return;
-        }
-        try {
-            mcpServer.close();
-        } catch (RuntimeException exception) {
-            logger.error("Blockwise MCP endpoint failed to stop cleanly", exception);
-        } finally {
-            mcpServer = null;
+        recipeService = null;
+        recipeSource = null;
+        if (mcpServer != null) {
+            try {
+                mcpServer.close();
+            } catch (RuntimeException exception) {
+                logger.error("Blockwise MCP endpoint failed to stop cleanly", exception);
+            } finally {
+                mcpServer = null;
+            }
         }
     }
 }
