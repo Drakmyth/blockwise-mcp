@@ -3,6 +3,7 @@ package com.drakmyth.minecraft.blockwisemcp.neoforge;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeService;
 import com.drakmyth.minecraft.blockwisemcp.mcp.BlockwiseMcpServer;
+import com.drakmyth.minecraft.blockwisemcp.mcp.tools.FindRecipesByOutputTool;
 import com.drakmyth.minecraft.blockwisemcp.mcp.tools.ListLoadedModsTool;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +38,9 @@ public final class NeoForgeMcpLifecycle {
         recipeSource = new NeoForgeRecipeSource(event.getServer());
         recipeService = new RecipeService(recipeSource);
         var executor = new MinecraftServerToolExecutor(event.getServer(), timeout);
-        var tools = List.of(ListLoadedModsTool.create(modService, executor));
+        var tools = List.of(
+                ListLoadedModsTool.create(modService, executor),
+                FindRecipesByOutputTool.create(recipeService, executor));
         try {
             mcpServer = BlockwiseMcpServer.start(config.port(), timeout, version, tools);
             logger.info("Blockwise MCP endpoint started at http://127.0.0.1:{}/mcp", mcpServer.port());
