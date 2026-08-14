@@ -1,5 +1,6 @@
 package com.drakmyth.minecraft.blockwisemcp.core.recipes;
 
+import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceId;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.CursorCodec;
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.Page;
 import java.util.Comparator;
@@ -49,7 +50,7 @@ public final class RecipeService {
         }
         matches = matches.stream()
                 .filter(recipe -> recipe.outputs().stream().anyMatch(output -> output.itemId().equals(outputItemId)))
-                .filter(recipe -> position == null || recipe.id().compareTo(position) > 0)
+                .filter(recipe -> position == null || recipe.id().toString().compareTo(position) > 0)
                 .limit((long) limit + 1)
                 .toList();
 
@@ -57,16 +58,20 @@ public final class RecipeService {
         var items = hasNextPage ? matches.subList(0, limit) : matches;
         var nextCursor = hasNextPage
                 ? cursorCodec.encode(
-                        CURSOR_FORMAT_VERSION, snapshot.generation(), outputItemId, items.getLast().id())
+                        CURSOR_FORMAT_VERSION,
+                        snapshot.generation(),
+                        outputItemId.toString(),
+                        items.getLast().id().toString())
                 : null;
         return new Page<>(items, nextCursor);
     }
 
-    private String decodePosition(String cursor, RecipeSnapshot snapshot, String outputItemId) {
+    private String decodePosition(String cursor, RecipeSnapshot snapshot, ResourceId outputItemId) {
         if (cursor == null || cursor.isBlank()) {
             return null;
         }
-        return cursorCodec.decodePosition(cursor, CURSOR_FORMAT_VERSION, snapshot.generation(), outputItemId);
+        return cursorCodec.decodePosition(
+                cursor, CURSOR_FORMAT_VERSION, snapshot.generation(), outputItemId.toString());
     }
 
     private static void validateLimit(int limit) {

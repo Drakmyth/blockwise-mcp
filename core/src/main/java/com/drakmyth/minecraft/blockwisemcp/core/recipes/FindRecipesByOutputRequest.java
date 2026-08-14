@@ -1,6 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.core.recipes;
 
-import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceIds;
+import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceId;
+import java.util.Objects;
 
 /**
  * Requests a page of recipes producing one exact item ID.
@@ -9,8 +10,8 @@ import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceIds;
  * @param limit optional page size; defaults to 20 and must be between 1 and 100
  * @param cursor optional opaque continuation cursor
  */
-public record FindRecipesByOutputRequest(String outputItemId, Integer limit, String cursor) {
+public record FindRecipesByOutputRequest(ResourceId outputItemId, Integer limit, String cursor) {
     public FindRecipesByOutputRequest {
-        ResourceIds.requireNamespaced(outputItemId, "outputItemId");
+        Objects.requireNonNull(outputItemId, "outputItemId");
     }
 }
