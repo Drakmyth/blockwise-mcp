@@ -28,7 +28,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Its GameTest verifies Blockwise metadata end to end: ID, display name, and project version.
 - The following milestone adds `ModService.listLoadedMods(ListLoadedModsRequest)` with filtering, stable sorting, and cursor pagination, without MCP transport.
 - Keep loaded-mod domain types under `core.mods`; retain `LoadedMod` as the sole metadata model until broader reuse justifies `ModMetadata`.
-- Extract a separate MCP server module only when another deployment requires it.
+- Keep loader-independent MCP transport and tool mapping in an `mcp-server` module; NeoForge composes it with runtime sources and owns endpoint lifecycle.
 - Keep the initial repository template module-free; introduce modules with their first functional code rather than empty scaffolding.
 - Start with EditorConfig conventions; defer an enforced Java formatter until implementation experience justifies one.
 - Defer CI and Gradle setup until the first functional module provides a meaningful build and tests.
@@ -41,7 +41,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Offline modpack inspection is deferred, but not ruled out.
 - Integrated single-player is the first-priority runtime environment.
 - Multiplayer and dedicated-server support should remain on the roadmap.
-- The MCP transport will be network-based rather than stdio-oriented.
+- The MCP transport will use Streamable HTTP only; legacy HTTP+SSE and stdio are not initially supported.
+- Use the official MCP Java SDK rather than implementing the protocol directly; pin and audit its dependencies for the embedded Minecraft environment.
 - Initial releases will bind to localhost by default.
 - Public remote access is deferred until authentication, authorization, transport security, resource limits, and related threats have an explicit design.
 - The highest-value initial data categories are:
@@ -49,6 +50,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
   2. Recipes
 - Expose focused, single-purpose MCP tools rather than a generic data-query tool.
 - Initial tools: `list_loaded_mods` and `find_recipes_by_output`.
+- The next milestone delivers `list_loaded_mods` end to end through the localhost MCP endpoint before recipe implementation.
 - Successful tool responses use structured data without a redundant human-readable summary, subject to MCP client compatibility.
 - Provisional: errors include stable machine-readable codes, concise messages, and retry guidance when applicable.
 - Do not encode contract versions in tool names.
