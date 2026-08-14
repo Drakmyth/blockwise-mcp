@@ -17,9 +17,17 @@ public final class ListLoadedModsTool {
     private static final Map<String, Object> INPUT_SCHEMA = Map.of(
             "type", "object",
             "properties", Map.of(
-                    "filter", Map.of("type", "string", "description", "ID or display-name substring"),
-                    "limit", Map.of("type", "integer", "minimum", 1, "maximum", 100),
-                    "cursor", Map.of("type", "string", "description", "Opaque continuation cursor")),
+                    "filter", Map.of(
+                            "type", "string",
+                            "description", "Case-insensitive mod ID or display-name substring"),
+                    "limit", Map.of(
+                            "type", "integer",
+                            "minimum", 1,
+                            "maximum", 100,
+                            "description", "Maximum mods to return; defaults to 20"),
+                    "cursor", Map.of(
+                            "type", "string",
+                            "description", "Opaque continuation cursor from a previous response")),
             "additionalProperties", false);
 
     private static final Map<String, Object> OUTPUT_SCHEMA = Map.of(
@@ -27,15 +35,24 @@ public final class ListLoadedModsTool {
             "properties", Map.of(
                     "items", Map.of(
                             "type", "array",
+                            "description", "Loaded mods in this page",
                             "items", Map.of(
                                     "type", "object",
                                     "properties", Map.of(
-                                            "id", Map.of("type", "string"),
-                                            "displayName", Map.of("type", "string"),
-                                            "version", Map.of("type", "string")),
+                                            "id", Map.of(
+                                                    "type", "string",
+                                                    "description", "Loader-reported mod ID"),
+                                            "displayName", Map.of(
+                                                    "type", "string",
+                                                    "description", "Loader-reported display name"),
+                                            "version", Map.of(
+                                                    "type", "string",
+                                                    "description", "Loader-reported mod version")),
                                     "required", List.of("id", "displayName", "version"),
                                     "additionalProperties", false)),
-                    "nextCursor", Map.of("type", List.of("string", "null"))),
+                    "nextCursor", Map.of(
+                            "type", List.of("string", "null"),
+                            "description", "Opaque cursor for the next page, or null when no more mods remain")),
             "required", List.of("items", "nextCursor"),
             "additionalProperties", false);
 

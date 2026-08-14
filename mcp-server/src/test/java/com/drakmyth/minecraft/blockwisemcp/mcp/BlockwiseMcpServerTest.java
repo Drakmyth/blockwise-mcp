@@ -57,6 +57,24 @@ class BlockwiseMcpServerTest {
         }
     }
 
+    @Test
+    void describesEveryPublishedSchemaProperty() throws Exception {
+        var service = new ModService(() -> List.of(), 1);
+        var tools = List.of(ListLoadedModsTool.create(service, directExecutor()));
+        try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
+                var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
+                                "http://" + BlockwiseMcpServer.HOST + ":" + server.port())
+                        .endpoint(BlockwiseMcpServer.ENDPOINT)
+                        .build()).build()) {
+            client.initialize();
+
+            for (var tool : client.listTools().tools()) {
+                assertPropertyDescriptions(tool.name() + " input", tool.inputSchema());
+                assertPropertyDescriptions(tool.name() + " output", tool.outputSchema());
+            }
+        }
+    }
+
     private static McpToolExecutor directExecutor() {
         return new McpToolExecutor() {
             @Override
@@ -69,6 +87,25 @@ class BlockwiseMcpServerTest {
     @SuppressWarnings("unchecked")
     private static Map<String, Object> asMap(Object value) {
         return (Map<String, Object>) value;
+    }
+
+    private static void assertPropertyDescriptions(String path, Map<String, Object> schema) {
+        var properties = asMap(schema.get("properties"));
+        for (var entry : properties.entrySet()) {
+            var propertyPath = path + "." + entry.getKey();
+            var propertySchema = asMap(entry.getValue());
+            var description = propertySchema.get("description");
+            assertTrue(
+                    description instanceof String text && !text.isBlank(),
+                    propertyPath + " has no description");
+            if (propertySchema.containsKey("properties")) {
+                assertPropertyDescriptions(propertyPath, propertySchema);
+            }
+            if (propertySchema.get("items") instanceof Map<?, ?> itemSchema
+                    && itemSchema.containsKey("properties")) {
+                assertPropertyDescriptions(propertyPath + "[]", asMap(itemSchema));
+            }
+        }
     }
 
     private static String firstItemId(Map<String, Object> output) {
