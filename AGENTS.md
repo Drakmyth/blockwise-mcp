@@ -2,24 +2,24 @@
 
 ## Working style
 
-- Ask one discovery question at a time.
-- Show how many planned questions remain.
-- Adjust the count explicitly when new questions arise.
+- Ask one discovery question at a time, state how many planned questions remain, and adjust the count when new questions arise.
 - End every turn with one question or a request for verification.
-- Challenge assumptions, gaps, and weak reasoning; do not accept answers uncritically.
+- Challenge assumptions, gaps, and weak reasoning.
 - Keep responses and project documentation concise.
-- Use ASCII punctuation instead of equivalent Unicode punctuation.
-- Do not use underscores as separators in numeric literals.
-- Add concise Javadocs to public APIs when behavior, defaults, validation, lifecycle, ordering, or failures are not obvious. Avoid redundant documentation.
-- Work on dedicated branches; commit and push focused changes as work progresses.
-- Open the pull request directly after completing and validating an implementation phase.
-- Assign each newly opened pull request to Drakmyth.
-- Keep each pull request buildable, deployable, focused, and ideally at or below 350 changed lines.
-- When requesting PR review, provide a squash message with an optional one-line overview followed by a high-value commit log. Preserve meaningful delivered detail; omit or reword redundant entries.
+- Use ASCII punctuation and do not use underscores as numeric separators.
+- Do not implement until requirements and architecture are sufficiently established and the user approves the plan.
+- Add concise Javadocs only when public behavior, defaults, validation, lifecycle, ordering, or failures are not obvious.
+
+## Delivery
+
+- Work on dedicated branches and push focused commits as work progresses.
+- Keep pull requests buildable, deployable, focused, and ideally at or below 350 changed lines.
+- Open each pull request after completing and validating its implementation phase, and assign it to Drakmyth.
+- When requesting review, provide a high-value squash message and copy it to the system clipboard using an available platform-native utility (for example, `clip.exe` on Windows).
 - End squash messages with `Co-authored-by: Codex <codex@openai.com>`.
+- After merge, update the default branch, delete the local branch, and prune deleted remote branches.
 
 ## Discovery records
 
-- Record findings and decisions in `docs/discovery.md`.
-- Distinguish accepted decisions, provisional direction, risks, open questions, and deferred scope.
-- Do not begin implementation before requirements and architecture are sufficiently established.
+- Record accepted decisions, provisional direction, risks, open questions, and deferred scope in `docs/discovery.md`.
+- Keep implementation details out of discovery unless they constrain future design.
