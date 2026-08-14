@@ -13,8 +13,10 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    build:
+    changes:
         runs-on: ubuntu-latest
+        outputs:
+            required: ${{ steps.changes.outputs.required }}
         steps:
             - name: Check out repository
               uses: actions/checkout@v7
@@ -34,25 +36,49 @@ jobs:
                   done < <(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}")
                   echo "required=$required" >> "$GITHUB_OUTPUT"
 
+    validation:
+        name: validation (${{ matrix.target }})
+        needs: changes
+        strategy:
+            fail-fast: false
+            matrix:
+                target:
+                    - minimum
+                    - latest
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository
+              if: needs.changes.outputs.required == 'true'
+              uses: actions/checkout@v7
+
+            - name: Select NeoForge version
+              if: needs.changes.outputs.required == 'true'
+              id: neoforge
+              shell: bash
+              run: |
+                  if [[ "${{ matrix.target }}" == "minimum" ]]; then
+                      property=neo_version
+                  else
+                      property=neo_latest_version
+                  fi
+                  version=$(grep "^$property=" gradle.properties | cut -d= -f2-)
+                  echo "version=$version" >> "$GITHUB_OUTPUT"
+
             - name: Set up Java 21
-              if: steps.changes.outputs.required == 'true'
+              if: needs.changes.outputs.required == 'true'
               uses: actions/setup-java@v5
               with:
                   distribution: temurin
                   java-version: '21'
 
             - name: Set up Gradle
-              if: steps.changes.outputs.required == 'true'
+              if: needs.changes.outputs.required == 'true'
               uses: gradle/actions/setup-gradle@v6
 
-            - name: Build
-              if: steps.changes.outputs.required == 'true'
-              run: ./gradlew build
+            - name: Build against minimum NeoForge
+              if: needs.changes.outputs.required == 'true' && matrix.target == 'minimum'
+              run: ./gradlew build -Pneo_version=${{ steps.neoforge.outputs.version }}
 
-            - name: Run GameTests on minimum NeoForge
-              if: steps.changes.outputs.required == 'true'
-              run: ./gradlew :neoforge-1.21.1:runGameTestServer
-
-            - name: Run GameTests on latest supported NeoForge
-              if: steps.changes.outputs.required == 'true'
-              run: ./gradlew :neoforge-1.21.1:runGameTestServer -Pneo_version=$(grep '^neo_latest_version=' gradle.properties | cut -d= -f2-)
+            - name: Run GameTests
+              if: needs.changes.outputs.required == 'true'
+              run: ./gradlew :neoforge-1.21.1:runGameTestServer -Pneo_version=${{ steps.neoforge.outputs.version }}
