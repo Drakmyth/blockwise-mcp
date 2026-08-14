@@ -61,8 +61,11 @@ Provide AI clients with structured access to authoritative data from a running m
 ### Recipe direction
 
 - The first recipe operation finds every loaded recipe producing an exact namespaced item ID.
+- Initial support covers Minecraft's built-in recipe types, including recipes supplied by mod namespaces.
+- Admit a recipe only when its inputs and output are statically and authoritatively representable; defer custom machine types and input-dependent outputs.
 - Initial results include recipe ID, type, item inputs, and item outputs.
 - Do not expose raw serialized recipes initially.
+- Keep loader-specific custom ingredient, registration, and reload mechanisms behind adapters; detailed findings are in [recipe portability reconnaissance](recipe-portability.md).
 - The release-ready contract must represent common modded semantics; exotic or dynamic semantics may follow.
 
 ### Build and validation
@@ -97,7 +100,10 @@ Provide AI clients with structured access to authoritative data from a running m
 - Is `Blockwise MCP` sufficiently available and compliant with Minecraft branding guidance?
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
-- Which recipe semantics are required for the first release?
+- Should unsupported recipes be omitted, counted, or returned as structured unsupported entries?
+- Should initial support include smithing transforms despite missing public generic ingredient accessors?
+- How should tags, item alternatives, shaped layouts, and output components be represented without losing semantics?
+- How should NeoForge detect and publish a successful recipe-generation change after datapack reload?
 - How should type-specific recipe context, custom recipes, and dynamic recipes report semantics that cannot be represented faithfully?
 - Should loaded-mod results later include dependencies or source information?
 - Which MCP protocol version should the first release pin?
