@@ -54,6 +54,8 @@ jobs:
             - name: Set up Gradle
               if: needs.changes.outputs.required == 'true'
               uses: gradle/actions/setup-gradle@v6
+              with:
+                  cache-read-only: ${{ github.event.pull_request.head.repo.fork }}
 
             - name: Build against minimum NeoForge
               if: needs.changes.outputs.required == 'true'
@@ -116,6 +118,8 @@ jobs:
             - name: Set up Gradle
               if: needs.changes.outputs.required == 'true'
               uses: gradle/actions/setup-gradle@v6
+              with:
+                  cache-read-only: ${{ github.event.pull_request.head.repo.fork }}
 
             - name: Run packaged-mod GameTests
               if: needs.changes.outputs.required == 'true'
