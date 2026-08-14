@@ -33,7 +33,7 @@ public final class RecipeService {
      */
     public Page<RecipeDefinition> findByOutput(FindRecipesByOutputRequest request) {
         Objects.requireNonNull(request, "request");
-        var outputItemId = RecipeIds.requireNamespaced(request.outputItemId(), "outputItemId");
+        var outputItemId = request.outputItemId();
         var limit = request.limit() == null ? DEFAULT_LIMIT : request.limit();
         validateLimit(limit);
         var snapshot = Objects.requireNonNull(source.getRecipes(), "source result");

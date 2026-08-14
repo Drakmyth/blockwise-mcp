@@ -43,6 +43,7 @@ class RecipeServiceTest {
     void validatesRequestAndDataset() {
         var service = service(new RecipeSnapshot(GENERATION, RECIPES));
         assertThrows(NullPointerException.class, () -> service.findByOutput(null));
+        assertThrows(NullPointerException.class, () -> new FindRecipesByOutputRequest(null, null, null));
         assertThrows(
                 IllegalArgumentException.class,
                 () -> service.findByOutput(new FindRecipesByOutputRequest("target", null, null)));

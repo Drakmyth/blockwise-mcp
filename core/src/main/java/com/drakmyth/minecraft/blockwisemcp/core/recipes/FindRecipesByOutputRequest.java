@@ -8,4 +8,7 @@ package com.drakmyth.minecraft.blockwisemcp.core.recipes;
  * @param cursor optional opaque continuation cursor
  */
 public record FindRecipesByOutputRequest(String outputItemId, Integer limit, String cursor) {
+    public FindRecipesByOutputRequest {
+        RecipeIds.requireNamespaced(outputItemId, "outputItemId");
+    }
 }
