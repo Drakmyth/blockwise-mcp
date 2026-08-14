@@ -38,31 +38,27 @@ jobs:
 
     build:
         needs: changes
+        if: needs.changes.outputs.required == 'true'
         runs-on: ubuntu-latest
         steps:
             - name: Check out repository
-              if: needs.changes.outputs.required == 'true'
               uses: actions/checkout@v7
 
             - name: Set up Java 21
-              if: needs.changes.outputs.required == 'true'
               uses: actions/setup-java@v5
               with:
                   distribution: temurin
                   java-version: '21'
 
             - name: Set up Gradle
-              if: needs.changes.outputs.required == 'true'
               uses: gradle/actions/setup-gradle@v6
               with:
                   cache-read-only: ${{ github.event.pull_request.head.repo.fork }}
 
             - name: Build against minimum NeoForge
-              if: needs.changes.outputs.required == 'true'
               run: ./gradlew :core:build :mcp-server:build :neoforge-1.21.1:build
 
             - name: Upload distributable mod
-              if: needs.changes.outputs.required == 'true'
               uses: actions/upload-artifact@v7
               with:
                   name: blockwise-mod
@@ -75,6 +71,9 @@ jobs:
         needs:
             - changes
             - build
+        if: >-
+            always() && needs.changes.result == 'success' &&
+            (needs.changes.outputs.required == 'false' || needs.build.result == 'success')
         strategy:
             fail-fast: false
             matrix:
