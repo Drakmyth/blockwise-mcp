@@ -9,25 +9,32 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 
 /** Provides loader-independent operations over runtime mod metadata. */
 public final class ModService {
     public static final int DEFAULT_LIMIT = 20;
     public static final int MAX_LIMIT = 100;
 
-    private static final int CURSOR_FORMAT_VERSION = 1;
+    private static final int CURSOR_FORMAT_VERSION = 2;
 
     private final LoadedModSource source;
-    private final long generation;
+    private final UUID generation;
     private final CursorCodec cursorCodec;
 
-    public ModService(LoadedModSource source, long generation) {
+    /**
+     * Creates a service for one dataset generation.
+     *
+     * @param source authoritative loaded-mod source
+     * @param generation opaque token shared by cursors from the same server session
+     */
+    public ModService(LoadedModSource source, UUID generation) {
         this(source, generation, new CursorCodec());
     }
 
-    ModService(LoadedModSource source, long generation, CursorCodec cursorCodec) {
+    ModService(LoadedModSource source, UUID generation, CursorCodec cursorCodec) {
         this.source = Objects.requireNonNull(source, "source");
-        this.generation = generation;
+        this.generation = Objects.requireNonNull(generation, "generation");
         this.cursorCodec = Objects.requireNonNull(cursorCodec, "cursorCodec");
     }
 

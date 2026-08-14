@@ -8,17 +8,19 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.UUID;
 
 /** Encodes and validates opaque, URL-safe pagination cursors. */
 public final class CursorCodec {
     /** Creates an opaque cursor from service-owned pagination state. */
-    public String encode(int formatVersion, long generation, String queryIdentity, String position) {
+    public String encode(int formatVersion, UUID generation, String queryIdentity, String position) {
         var cursor = new Cursor(formatVersion, generation, queryIdentity, position);
         try {
             var bytes = new ByteArrayOutputStream();
             try (var output = new DataOutputStream(bytes)) {
                 output.writeInt(cursor.formatVersion());
-                output.writeLong(cursor.generation());
+                output.writeLong(cursor.generation().getMostSignificantBits());
+                output.writeLong(cursor.generation().getLeastSignificantBits());
                 output.writeUTF(cursor.queryIdentity());
                 output.writeUTF(cursor.position());
             }
@@ -36,15 +38,10 @@ public final class CursorCodec {
     public String decodePosition(
             String encoded,
             int expectedFormatVersion,
-            long expectedGeneration,
+            UUID expectedGeneration,
             String expectedQueryIdentity) {
-        var cursor = decode(encoded);
-        if (cursor.formatVersion() != expectedFormatVersion) {
-            throw new InvalidCursorException(
-                    InvalidCursorException.Reason.UNSUPPORTED_FORMAT,
-                    "Cursor format is unsupported");
-        }
-        if (cursor.generation() != expectedGeneration) {
+        var cursor = decode(encoded, expectedFormatVersion);
+        if (!cursor.generation().equals(expectedGeneration)) {
             throw new InvalidCursorException(InvalidCursorException.Reason.STALE, "Cursor is stale");
         }
         if (!cursor.queryIdentity().equals(expectedQueryIdentity)) {
@@ -55,11 +52,18 @@ public final class CursorCodec {
         return cursor.position();
     }
 
-    private Cursor decode(String encoded) {
+    private Cursor decode(String encoded, int expectedFormatVersion) {
         try {
             var bytes = Base64.getUrlDecoder().decode(encoded);
             try (var input = new DataInputStream(new ByteArrayInputStream(bytes))) {
-                var cursor = new Cursor(input.readInt(), input.readLong(), input.readUTF(), input.readUTF());
+                var formatVersion = input.readInt();
+                if (formatVersion != expectedFormatVersion) {
+                    throw new InvalidCursorException(
+                            InvalidCursorException.Reason.UNSUPPORTED_FORMAT,
+                            "Cursor format is unsupported");
+                }
+                var generation = new UUID(input.readLong(), input.readLong());
+                var cursor = new Cursor(formatVersion, generation, input.readUTF(), input.readUTF());
                 if (input.available() != 0) {
                     throw malformed();
                 }
