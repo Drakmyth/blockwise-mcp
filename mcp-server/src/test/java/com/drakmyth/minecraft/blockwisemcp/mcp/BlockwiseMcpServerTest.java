@@ -3,6 +3,7 @@ package com.drakmyth.minecraft.blockwisemcp.mcp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
@@ -48,6 +49,11 @@ class BlockwiseMcpServerTest {
                     .arguments(Map.of("limit", 1, "cursor", output.get("nextCursor")))
                     .build());
             assertEquals("zeta", firstItemId(asMap(second.structuredContent())));
+
+            var invalid = client.callTool(CallToolRequest.builder("list_loaded_mods")
+                    .arguments(Map.of("limit", "many"))
+                    .build());
+            assertTrue(invalid.isError());
         }
     }
 

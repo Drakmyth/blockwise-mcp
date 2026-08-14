@@ -43,6 +43,8 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Multiplayer and dedicated-server support should remain on the roadmap.
 - The MCP transport will use Streamable HTTP only; legacy HTTP+SSE and stdio are not initially supported.
 - Use the official MCP Java SDK rather than implementing the protocol directly; pin and audit its dependencies for the embedded Minecraft environment.
+- Bundle MCP runtime dependencies inside the `mcp-server` library because their automatic module metadata and root schema resources are incompatible with NeoForge's module layer.
+- Validate tool inputs in adapters and serialize trusted outputs; the SDK's default networknt schema validator cannot load its root schema resources through NeoForge's module layer.
 - Initial releases bind strictly to `127.0.0.1`; the port is configurable and defaults to `47831`.
 - Keep the Streamable HTTP path fixed at `/mcp`; coexistence with other embedded MCP mods is handled through port configuration.
 - Initial endpoint configuration contains only `enabled`, `port`, and `dispatchTimeoutSeconds`.

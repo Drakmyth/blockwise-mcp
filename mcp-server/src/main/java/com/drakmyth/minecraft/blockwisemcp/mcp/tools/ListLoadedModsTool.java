@@ -3,6 +3,7 @@ package com.drakmyth.minecraft.blockwisemcp.mcp.tools;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ListLoadedModsRequest;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
+import com.drakmyth.minecraft.blockwisemcp.mcp.McpToolDefinition;
 import com.drakmyth.minecraft.blockwisemcp.mcp.McpToolExecutor;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
@@ -10,6 +11,7 @@ import io.modelcontextprotocol.spec.McpSchema.Tool;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 public final class ListLoadedModsTool {
@@ -20,6 +22,8 @@ public final class ListLoadedModsTool {
                     "limit", Map.of("type", "integer", "minimum", 1, "maximum", 100),
                     "cursor", Map.of("type", "string", "description", "Opaque continuation cursor")),
             "additionalProperties", false);
+
+    private static final Set<String> INPUT_FIELDS = Set.of("filter", "limit", "cursor");
 
     private static final Map<String, Object> OUTPUT_SCHEMA = Map.of(
             "type", "object",
@@ -41,23 +45,27 @@ public final class ListLoadedModsTool {
     private ListLoadedModsTool() {
     }
 
-    public static SyncToolSpecification create(ModService service, McpToolExecutor executor) {
+    public static McpToolDefinition create(ModService service, McpToolExecutor executor) {
         var tool = Tool.builder("list_loaded_mods", INPUT_SCHEMA)
                 .description("Lists mods loaded in the current Minecraft runtime")
                 .outputSchema(OUTPUT_SCHEMA)
                 .build();
-        return SyncToolSpecification.builder()
+        var definition = SyncToolSpecification.builder()
                 .tool(tool)
                 .callHandler((exchange, call) -> invoke(service, executor, call.arguments()))
                 .build();
+        return () -> definition;
     }
 
     private static CallToolResult invoke(ModService service, McpToolExecutor executor, Map<String, Object> arguments) {
         try {
+            if (!INPUT_FIELDS.containsAll(arguments.keySet())) {
+                throw new IllegalArgumentException("Input contains an unsupported field");
+            }
             var request = new ListLoadedModsRequest(
-                    (String) arguments.get("filter"),
-                    arguments.get("limit") instanceof Number limit ? limit.intValue() : null,
-                    (String) arguments.get("cursor"));
+                    optionalString(arguments, "filter"),
+                    optionalInteger(arguments, "limit"),
+                    optionalString(arguments, "cursor"));
             var page = executor.execute(() -> service.listLoadedMods(request));
             var items = page.items().stream().map(ListLoadedModsTool::toMap).toList();
             var output = new LinkedHashMap<String, Object>();
@@ -70,6 +78,22 @@ public final class ListLoadedModsTool {
                     "message", exception.getMessage() == null ? "Tool execution failed" : exception.getMessage()))
                     .build();
         }
+    }
+
+    private static String optionalString(Map<String, Object> arguments, String name) {
+        var value = arguments.get(name);
+        if (value == null || value instanceof String) {
+            return (String) value;
+        }
+        throw new IllegalArgumentException(name + " must be a string");
+    }
+
+    private static Integer optionalInteger(Map<String, Object> arguments, String name) {
+        var value = arguments.get(name);
+        if (value == null || value instanceof Integer) {
+            return (Integer) value;
+        }
+        throw new IllegalArgumentException(name + " must be an integer");
     }
 
     private static Map<String, Object> toMap(LoadedMod mod) {
