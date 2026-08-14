@@ -11,7 +11,15 @@ dependencies {
 }
 
 base {
-    archivesName = 'blockwise-mcp-neoforge-${minecraft_version}'
+    archivesName = "blockwise-mcp-neoforge-${minecraft_version}"
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    doFirst {
+        if (archiveFileName.get().contains('${')) {
+            throw new GradleException("Archive filename contains an unresolved placeholder: ${archiveFileName.get()}")
+        }
+    }
 }
 
 neoForge {
