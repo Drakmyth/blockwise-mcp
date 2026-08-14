@@ -21,6 +21,16 @@ public final class BlockwiseGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void startsMcpEndpoint(GameTestHelper helper) {
+        if (!Blockwise.isMcpRunning()) {
+            helper.fail("Blockwise MCP endpoint is not running");
+            return;
+        }
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void exposesBlockwiseMetadata(GameTestHelper helper) {
         var blockwise = new NeoForgeLoadedModSource().getLoadedMods().stream()
                 .filter(mod -> mod.id().equals(Blockwise.MOD_ID))

@@ -18,18 +18,37 @@ jobs:
         steps:
             - name: Check out repository
               uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Detect build-impacting changes
+              id: changes
+              shell: bash
+              run: |
+                  required=false
+                  while IFS= read -r path; do
+                      if [[ "$path" != docs/* && "$path" != *.md ]]; then
+                          required=true
+                          break
+                      fi
+                  done < <(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}")
+                  echo "required=$required" >> "$GITHUB_OUTPUT"
 
             - name: Set up Java 21
+              if: steps.changes.outputs.required == 'true'
               uses: actions/setup-java@v5
               with:
                   distribution: temurin
                   java-version: '21'
 
             - name: Set up Gradle
+              if: steps.changes.outputs.required == 'true'
               uses: gradle/actions/setup-gradle@v6
 
             - name: Build
+              if: steps.changes.outputs.required == 'true'
               run: ./gradlew build
 
             - name: Run GameTests
+              if: steps.changes.outputs.required == 'true'
               run: ./gradlew :neoforge-1.21.1:runGameTestServer

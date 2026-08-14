@@ -3,6 +3,7 @@ package com.drakmyth.minecraft.blockwisemcp.mcp.tools;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ListLoadedModsRequest;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.LoadedMod;
 import com.drakmyth.minecraft.blockwisemcp.core.mods.ModService;
+import com.drakmyth.minecraft.blockwisemcp.mcp.McpToolDefinition;
 import com.drakmyth.minecraft.blockwisemcp.mcp.McpToolExecutor;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
@@ -41,15 +42,16 @@ public final class ListLoadedModsTool {
     private ListLoadedModsTool() {
     }
 
-    public static SyncToolSpecification create(ModService service, McpToolExecutor executor) {
+    public static McpToolDefinition create(ModService service, McpToolExecutor executor) {
         var tool = Tool.builder("list_loaded_mods", INPUT_SCHEMA)
                 .description("Lists mods loaded in the current Minecraft runtime")
                 .outputSchema(OUTPUT_SCHEMA)
                 .build();
-        return SyncToolSpecification.builder()
+        var definition = SyncToolSpecification.builder()
                 .tool(tool)
                 .callHandler((exchange, call) -> invoke(service, executor, call.arguments()))
                 .build();
+        return () -> definition;
     }
 
     private static CallToolResult invoke(ModService service, McpToolExecutor executor, Map<String, Object> arguments) {

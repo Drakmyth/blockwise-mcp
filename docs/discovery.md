@@ -43,6 +43,9 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Multiplayer and dedicated-server support should remain on the roadmap.
 - The MCP transport will use Streamable HTTP only; legacy HTTP+SSE and stdio are not initially supported.
 - Use the official MCP Java SDK rather than implementing the protocol directly; pin and audit its dependencies for the embedded Minecraft environment.
+- Bundle MCP runtime dependencies inside the `mcp-server` library because some dependency module metadata is incompatible with NeoForge's module layer.
+- Preserve SDK JSON Schema validation by repackaging networknt's root schema resources under a Java package and using a scoped module-compatible resource loader.
+- Follow up with SecureJarHandler upstream: non-package resources in a readable parent-layer module are not found by its fallback resource search; prepare a minimal reproduction before reporting.
 - Initial releases bind strictly to `127.0.0.1`; the port is configurable and defaults to `47831`.
 - Keep the Streamable HTTP path fixed at `/mcp`; coexistence with other embedded MCP mods is handled through port configuration.
 - Initial endpoint configuration contains only `enabled`, `port`, and `dispatchTimeoutSeconds`.
@@ -94,6 +97,7 @@ The motivating user experience is AI-assisted play, particularly understanding c
 - Prioritize fast tests for core contracts and services, supplemented by focused NeoForge integration tests for runtime extraction and lifecycle behavior.
 - Provisional: pull requests to `master` must pass both core and NeoForge integration tests; avoid duplicate CI on ordinary branch pushes.
 - GitHub Actions on Linux is the authoritative CI environment; local Windows development remains supported.
+- Keep the required Build check successful for documentation-only pull requests while skipping Java, Gradle, and GameTest setup when every changed path is under `docs/` or is a Markdown file.
 - Query live Minecraft managers initially; add snapshots only if measurement justifies their startup and lifecycle cost.
 - Schedule bounded data extraction on Minecraft's server thread when required by API thread-safety; serialize responses off-thread.
 - Fail requests explicitly when the game runtime is unavailable or bounded server-thread work times out.

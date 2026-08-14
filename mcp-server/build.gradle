@@ -2,15 +2,43 @@ plugins {
     id 'java-library'
 }
 
+configurations {
+    embeddedRuntime
+    compileOnly.extendsFrom embeddedRuntime
+    testCompileOnly.extendsFrom embeddedRuntime
+    testRuntimeOnly.extendsFrom embeddedRuntime
+}
+
 dependencies {
     api project(':core')
-    implementation 'io.modelcontextprotocol.sdk:mcp-core:2.0.0'
-    implementation 'io.modelcontextprotocol.sdk:mcp-json-jackson3:2.0.0'
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0.2'
+    embeddedRuntime 'io.modelcontextprotocol.sdk:mcp-core:2.0.0'
+    embeddedRuntime 'io.modelcontextprotocol.sdk:mcp-json-jackson3:2.0.0'
+    embeddedRuntime 'org.apache.tomcat.embed:tomcat-embed-core:11.0.2'
+    compileOnly 'org.slf4j:slf4j-api:2.0.17'
 
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.slf4j:slf4j-api:2.0.17'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.17'
+}
+
+tasks.named('jar') {
+    manifest.attributes('FMLModType': 'LIBRARY')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.embeddedRuntime.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude 'org/slf4j/**', 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/*/module-info.class'
+}
+
+tasks.named('processResources') {
+    from({
+        configurations.embeddedRuntime.collect { it.isDirectory() ? it : zipTree(it) }
+    }) {
+        include 'draft/**'
+        into 'com/drakmyth/minecraft/blockwisemcp/mcp/schema'
+    }
 }
 
 tasks.named('test') {

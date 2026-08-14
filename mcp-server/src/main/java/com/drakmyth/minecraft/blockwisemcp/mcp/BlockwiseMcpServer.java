@@ -1,6 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.mcp;
 
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
+import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.DefaultServerTransportSecurityValidator;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.TomcatURLStreamHandlerFactory;
 
 /** Embedded loader-independent Streamable HTTP server for Blockwise MCP tools. */
 public final class BlockwiseMcpServer implements AutoCloseable {
@@ -42,7 +44,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
             int port,
             Duration requestTimeout,
             String version,
-            List<SyncToolSpecification> tools) throws IOException, LifecycleException {
+            List<McpToolDefinition> tools) throws IOException {
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("port must be between 0 and 65535");
         }
@@ -54,14 +56,22 @@ public final class BlockwiseMcpServer implements AutoCloseable {
                 .allowedHost(HOST + ":*")
                 .allowedOrigin("http://" + HOST + ":*")
                 .build();
+        var jsonMapper = McpJsonDefaults.getMapper();
         var transport = HttpServletStreamableServerTransportProvider.builder()
+                .jsonMapper(jsonMapper)
                 .mcpEndpoint(ENDPOINT)
                 .securityValidator(security)
                 .build();
+        var sdkTools = tools.stream()
+                .map(McpToolDefinition::sdkDefinition)
+                .map(SyncToolSpecification.class::cast)
+                .toList();
         var mcpServer = McpServer.sync(transport)
                 .serverInfo("blockwise-mcp", version)
                 .capabilities(ServerCapabilities.builder().tools(false).build())
-                .tools(tools)
+                .jsonMapper(jsonMapper)
+                .jsonSchemaValidator(new ModuleCompatibleJsonSchemaValidator())
+                .tools(sdkTools)
                 .requestTimeout(requestTimeout)
                 .build();
         var baseDirectory = Files.createTempDirectory("blockwise-mcp-");
@@ -72,7 +82,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
         } catch (LifecycleException exception) {
             mcpServer.close();
             deleteBaseDirectory(baseDirectory);
-            throw exception;
+            throw new IOException("Failed to start MCP server", exception);
         }
     }
 
@@ -97,6 +107,8 @@ public final class BlockwiseMcpServer implements AutoCloseable {
 
     private static Tomcat createTomcat(
             int port, HttpServletStreamableServerTransportProvider transport, Path baseDirectory) {
+        // Avoid installing Tomcat's unused WAR/classpath URL handlers as JVM-global state.
+        TomcatURLStreamHandlerFactory.disable();
         var tomcat = new Tomcat();
         tomcat.setBaseDir(baseDirectory.toString());
         tomcat.setPort(port);
@@ -110,7 +122,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
         context.addServletMappingDecoded("/*", "mcp");
         var connector = tomcat.getConnector();
         connector.setProperty("address", HOST);
-        connector.setMaxPostSize(1_048_576);
+        connector.setMaxPostSize(1048576);
         return tomcat;
     }
 
