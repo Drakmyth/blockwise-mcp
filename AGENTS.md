@@ -15,7 +15,7 @@
 - Work on dedicated branches and push focused commits as work progresses.
 - Keep pull requests buildable, deployable, focused, and ideally at or below 350 changed lines.
 - Open each pull request after completing and validating its implementation phase, and assign it to Drakmyth.
-- When requesting review, provide a high-value squash message and copy it to the Windows clipboard with `clip.exe`.
+- When requesting review, provide a high-value squash message and copy it to the system clipboard using an available platform-native utility (for example, `clip.exe` on Windows).
 - End squash messages with `Co-authored-by: Codex <codex@openai.com>`.
 - After merge, update the default branch, delete the local branch, and prune deleted remote branches.
 
