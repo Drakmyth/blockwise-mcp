@@ -11,7 +11,6 @@ import io.modelcontextprotocol.spec.McpSchema.Tool;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 public final class ListLoadedModsTool {
@@ -22,8 +21,6 @@ public final class ListLoadedModsTool {
                     "limit", Map.of("type", "integer", "minimum", 1, "maximum", 100),
                     "cursor", Map.of("type", "string", "description", "Opaque continuation cursor")),
             "additionalProperties", false);
-
-    private static final Set<String> INPUT_FIELDS = Set.of("filter", "limit", "cursor");
 
     private static final Map<String, Object> OUTPUT_SCHEMA = Map.of(
             "type", "object",
@@ -59,13 +56,10 @@ public final class ListLoadedModsTool {
 
     private static CallToolResult invoke(ModService service, McpToolExecutor executor, Map<String, Object> arguments) {
         try {
-            if (!INPUT_FIELDS.containsAll(arguments.keySet())) {
-                throw new IllegalArgumentException("Input contains an unsupported field");
-            }
             var request = new ListLoadedModsRequest(
-                    optionalString(arguments, "filter"),
-                    optionalInteger(arguments, "limit"),
-                    optionalString(arguments, "cursor"));
+                    (String) arguments.get("filter"),
+                    arguments.get("limit") instanceof Number limit ? limit.intValue() : null,
+                    (String) arguments.get("cursor"));
             var page = executor.execute(() -> service.listLoadedMods(request));
             var items = page.items().stream().map(ListLoadedModsTool::toMap).toList();
             var output = new LinkedHashMap<String, Object>();
@@ -78,22 +72,6 @@ public final class ListLoadedModsTool {
                     "message", exception.getMessage() == null ? "Tool execution failed" : exception.getMessage()))
                     .build();
         }
-    }
-
-    private static String optionalString(Map<String, Object> arguments, String name) {
-        var value = arguments.get(name);
-        if (value == null || value instanceof String) {
-            return (String) value;
-        }
-        throw new IllegalArgumentException(name + " must be a string");
-    }
-
-    private static Integer optionalInteger(Map<String, Object> arguments, String name) {
-        var value = arguments.get(name);
-        if (value == null || value instanceof Integer) {
-            return (Integer) value;
-        }
-        throw new IllegalArgumentException(name + " must be an integer");
     }
 
     private static Map<String, Object> toMap(LoadedMod mod) {

@@ -29,8 +29,16 @@ tasks.named('jar') {
     from {
         configurations.embeddedRuntime.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    exclude 'org/slf4j/**', 'com/networknt/**', 'com/ethlo/**', 'org/snakeyaml/**', 'tools/jackson/dataformat/yaml/**', 'draft/**'
-    exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/*/module-info.class'
+    exclude 'org/slf4j/**', 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/*/module-info.class'
+}
+
+tasks.named('processResources') {
+    from({
+        configurations.embeddedRuntime.collect { it.isDirectory() ? it : zipTree(it) }
+    }) {
+        include 'draft/**'
+        into 'com/drakmyth/minecraft/blockwisemcp/mcp/schema'
+    }
 }
 
 tasks.named('test') {

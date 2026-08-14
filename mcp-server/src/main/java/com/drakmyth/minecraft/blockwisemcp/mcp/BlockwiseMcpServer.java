@@ -2,7 +2,6 @@ package com.drakmyth.minecraft.blockwisemcp.mcp;
 
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.json.McpJsonDefaults;
-import io.modelcontextprotocol.json.schema.JsonSchemaValidator.ValidationResponse;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.transport.DefaultServerTransportSecurityValidator;
@@ -71,14 +70,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
                 .serverInfo("blockwise-mcp", version)
                 .capabilities(ServerCapabilities.builder().tools(false).build())
                 .jsonMapper(jsonMapper)
-                .jsonSchemaValidator((schema, value) -> {
-                    try {
-                        return ValidationResponse.asValid(jsonMapper.writeValueAsString(value));
-                    } catch (IOException exception) {
-                        return ValidationResponse.asInvalid(exception.getMessage());
-                    }
-                })
-                .validateToolInputs(false)
+                .jsonSchemaValidator(new ModuleCompatibleJsonSchemaValidator())
                 .tools(sdkTools)
                 .requestTimeout(requestTimeout)
                 .build();
