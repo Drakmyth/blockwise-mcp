@@ -18,8 +18,9 @@ public final class Blockwise {
     private static NeoForgeMcpLifecycle mcpLifecycle;
 
     public Blockwise(ModContainer container) {
-        container.registerConfig(ModConfig.Type.COMMON, BlockwiseConfig.SPEC);
-        mcpLifecycle = new NeoForgeMcpLifecycle(LOGGER, container.getModInfo().getVersion().toString());
+        var config = new BlockwiseConfig();
+        container.registerConfig(ModConfig.Type.COMMON, config.spec());
+        mcpLifecycle = new NeoForgeMcpLifecycle(LOGGER, container.getModInfo().getVersion().toString(), config);
         NeoForge.EVENT_BUS.addListener(mcpLifecycle::serverStarted);
         NeoForge.EVENT_BUS.addListener(mcpLifecycle::serverStopping);
         initialized = true;
