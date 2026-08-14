@@ -121,7 +121,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
         context.addServletMappingDecoded("/*", "mcp");
         var connector = tomcat.getConnector();
         connector.setProperty("address", HOST);
-        connector.setMaxPostSize(1_048_576);
+        connector.setMaxPostSize(1048576);
         return tomcat;
     }
 
