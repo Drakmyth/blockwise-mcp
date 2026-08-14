@@ -1,5 +1,6 @@
 package com.drakmyth.minecraft.blockwisemcp.core.recipes;
 
+import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceIds;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ public record RecipeIngredient(List<String> options) {
         }
         for (var option : options) {
             var id = option != null && option.startsWith("#") ? option.substring(1) : option;
-            RecipeIds.requireNamespaced(id, "option");
+            ResourceIds.requireNamespaced(id, "option");
         }
     }
 }

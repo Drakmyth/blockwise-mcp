@@ -1,5 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.core.recipes;
 
+import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceIds;
+
 /**
  * Requests a page of recipes producing one exact item ID.
  *
@@ -9,6 +11,6 @@ package com.drakmyth.minecraft.blockwisemcp.core.recipes;
  */
 public record FindRecipesByOutputRequest(String outputItemId, Integer limit, String cursor) {
     public FindRecipesByOutputRequest {
-        RecipeIds.requireNamespaced(outputItemId, "outputItemId");
+        ResourceIds.requireNamespaced(outputItemId, "outputItemId");
     }
 }
