@@ -11,10 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class ModServiceTest {
-    private static final long GENERATION = 7;
+    private static final UUID GENERATION = UUID.fromString("3f747dc7-1945-4e9f-96b6-a2543bc88c98");
     private static final List<LoadedMod> MODS = List.of(
             new LoadedMod("zeta", "Craft Helper", "1"),
             new LoadedMod("alpha", "Alpha", "2"),
@@ -61,7 +62,10 @@ class ModServiceTest {
 
         assertReason(MALFORMED, () -> service.listLoadedMods(new ListLoadedModsRequest(null, 1, "not base64")));
         assertReason(QUERY_MISMATCH, () -> service.listLoadedMods(new ListLoadedModsRequest("alpha", 1, cursor)));
-        assertReason(STALE, () -> serviceWithGeneration(8).listLoadedMods(new ListLoadedModsRequest(null, 1, cursor)));
+        assertReason(
+                STALE,
+                () -> serviceWithGeneration(UUID.fromString("c5667681-59c4-4508-b1b6-ff55e5e01b2c"))
+                        .listLoadedMods(new ListLoadedModsRequest(null, 1, cursor)));
     }
 
     @Test
@@ -71,7 +75,7 @@ class ModServiceTest {
         assertTrue(service.listLoadedMods(new ListLoadedModsRequest(null, 100, null)).items().size() <= 100);
     }
 
-    private ModService serviceWithGeneration(long generation) {
+    private ModService serviceWithGeneration(UUID generation) {
         return new ModService(() -> MODS, generation);
     }
 

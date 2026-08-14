@@ -14,6 +14,7 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class BlockwiseMcpServerTest {
                 () -> List.of(
                         new LoadedMod("zeta", "Craft Helper", "1"),
                         new LoadedMod("alpha", "Alpha", "2")),
-                1);
+                UUID.randomUUID());
         var tools = List.of(ListLoadedModsTool.create(service, directExecutor()));
         try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
                 var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
@@ -59,7 +60,7 @@ class BlockwiseMcpServerTest {
 
     @Test
     void describesEveryPublishedSchemaProperty() throws Exception {
-        var service = new ModService(() -> List.of(), 1);
+        var service = new ModService(() -> List.of(), UUID.randomUUID());
         var tools = List.of(ListLoadedModsTool.create(service, directExecutor()));
         try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
                 var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
