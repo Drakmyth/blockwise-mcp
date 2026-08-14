@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 
 /** Composes and owns the MCP endpoint for each active Minecraft server. */
 public final class NeoForgeMcpLifecycle {
+    private static final long NON_GENERATIONAL_LOADED_MOD_DATA = 0;
+
     private final Logger logger;
     private final String version;
     private final BlockwiseConfig config;
@@ -28,7 +30,7 @@ public final class NeoForgeMcpLifecycle {
         }
 
         var timeout = config.dispatchTimeout();
-        var service = new ModService(new NeoForgeLoadedModSource(), 0);
+        var service = new ModService(new NeoForgeLoadedModSource(), NON_GENERATIONAL_LOADED_MOD_DATA);
         var executor = new MinecraftServerToolExecutor(event.getServer(), timeout);
         var tools = List.of(ListLoadedModsTool.create(service, executor));
         try {
