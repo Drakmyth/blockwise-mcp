@@ -16,7 +16,7 @@ public final class ModService {
     public static final int DEFAULT_LIMIT = 20;
     public static final int MAX_LIMIT = 100;
 
-    private static final int CURSOR_FORMAT_VERSION = 2;
+    private static final int CURSOR_FORMAT_VERSION = 1;
 
     private final LoadedModSource source;
     private final UUID generation;
