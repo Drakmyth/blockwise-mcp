@@ -5,7 +5,9 @@ plugins {
 
 dependencies {
     implementation project(':core')
+    implementation project(':mcp-server')
     jarJar project(':core')
+    jarJar project(':mcp-server')
 }
 
 base {
