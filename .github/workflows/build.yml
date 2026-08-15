@@ -196,12 +196,10 @@ jobs:
                   fi
                   loader=$(grep "^${prefix}_loader_version=" gradle.properties | cut -d= -f2-)
                   api=$(grep "^${prefix}_api_version=" gradle.properties | cut -d= -f2-)
-                  gametest=$(grep "^${prefix}_gametest_version=" gradle.properties | cut -d= -f2-)
                   mod_jar=$(find compatibility-artifact -name '*.jar' -type f -print -quit)
                   gametest_jar=$(find gametest-artifact -name '*.jar' -type f -print -quit)
                   echo "loader_version=$loader" >> "$GITHUB_OUTPUT"
                   echo "api_version=$api" >> "$GITHUB_OUTPUT"
-                  echo "gametest_version=$gametest" >> "$GITHUB_OUTPUT"
                   echo "mod_jar=$GITHUB_WORKSPACE/$mod_jar" >> "$GITHUB_OUTPUT"
                   echo "gametest_jar=$GITHUB_WORKSPACE/$gametest_jar" >> "$GITHUB_OUTPUT"
 
@@ -227,7 +225,6 @@ jobs:
                   timeout 180s ./gradlew :fabric-compatibility-test:runGameTestServer \
                       -Pfabric_test_loader_version=${{ steps.compatibility.outputs.loader_version }} \
                       -Pfabric_test_api_version=${{ steps.compatibility.outputs.api_version }} \
-                      -Pfabric_test_gametest_version=${{ steps.compatibility.outputs.gametest_version }} \
                       -Pblockwise_mod_jar=${{ steps.compatibility.outputs.mod_jar }} \
                       -Pblockwise_gametest_jar=${{ steps.compatibility.outputs.gametest_jar }} \
                       --no-configuration-cache \
