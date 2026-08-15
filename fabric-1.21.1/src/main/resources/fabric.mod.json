@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "blockwisemcp",
+  "version": "${mod_version}",
+  "name": "Blockwise MCP",
+  "description": "An unofficial MCP server for querying runtime data from modded Minecraft.",
+  "authors": [
+    "Shaun Hamman"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Drakmyth/blockwise-mcp",
+    "issues": "https://github.com/Drakmyth/blockwise-mcp/issues",
+    "sources": "https://github.com/Drakmyth/blockwise-mcp"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": ">=${fabric_api_version}",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=21"
+  }
+}
