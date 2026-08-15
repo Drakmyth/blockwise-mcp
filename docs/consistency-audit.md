@@ -39,8 +39,8 @@ compatibility/
 - Loader lifecycle composition, tool ordering, generation creation, endpoint logging, and server-thread execution are behaviorally aligned.
 - The two server-thread executors are byte-for-byte equivalent apart from package names. Keep explicit loader adapters for now rather than introducing a Minecraft-version common module before another loader establishes a stable boundary.
 - Lifecycle visibility differs because NeoForge event registration requires public methods while Fabric callbacks do not. This is loader-driven, not drift.
-- Fabric isolates GameTests in a separate mod; NeoForge still ships GameTests and structures in the production artifact. ModDevGradle supports an isolated source set and separate test mod, detailed in [NeoForge test isolation reconnaissance](neoforge-test-isolation.md).
-- Fabric configuration has focused unit tests; NeoForge configuration does not. ModDevGradle's supported JUnit integration can close this coverage gap.
+- Both loaders isolate GameTests and test resources in separate test-only mods while packaged validation exercises the exact production JAR beside them.
+- Both loader configurations have focused unit coverage for defaults and accepted ranges.
 - Compatibility harnesses intentionally differ: Fabric launches Loader's production server directly, while NeoForge uses ModDevGradle with the packaged JAR as an external runtime mod. Their contracts and naming can align even when implementation cannot.
 
 ## Risks
@@ -52,7 +52,6 @@ compatibility/
 
 ## Proposed delivery
 
-1. Isolate NeoForge GameTests from the production artifact and close configuration-test gaps.
-2. Build the cross-loader conformance suite on the normalized structure.
+1. Build the cross-loader conformance suite on the normalized structure.
 
 Each implementation PR must pass unit tests, loader development tests, production artifact inspection, and all four minimum/recent packaged compatibility checks.

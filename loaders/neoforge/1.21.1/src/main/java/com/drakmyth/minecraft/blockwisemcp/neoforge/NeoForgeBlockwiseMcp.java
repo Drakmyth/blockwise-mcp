@@ -26,11 +26,13 @@ public final class NeoForgeBlockwiseMcp {
         LOGGER.info("Blockwise MCP initialized");
     }
 
-    static boolean isInitialized() {
+    /** Returns whether NeoForge constructed the Blockwise entrypoint. */
+    public static boolean isInitialized() {
         return initialized;
     }
 
-    static boolean isMcpRunning() {
+    /** Returns whether this game session currently owns a running MCP endpoint. */
+    public static boolean isMcpRunning() {
         return mcpLifecycle != null && mcpLifecycle.isRunning();
     }
 }

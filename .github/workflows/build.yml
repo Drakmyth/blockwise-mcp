@@ -62,7 +62,17 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   name: blockwise-neoforge-mod
-                  path: loaders/neoforge/1.21.1/build/libs/blockwisemcp-*-neoforge.jar
+                  path: |
+                      loaders/neoforge/1.21.1/build/libs/blockwisemcp-*-neoforge.jar
+                      !loaders/neoforge/1.21.1/build/libs/blockwisemcp-gametest-*-neoforge.jar
+                  if-no-files-found: error
+                  overwrite: true
+
+            - name: Upload NeoForge GameTest mod
+              uses: actions/upload-artifact@v7
+              with:
+                  name: blockwise-neoforge-gametest
+                  path: loaders/neoforge/1.21.1/build/libs/blockwisemcp-gametest-*-neoforge.jar
                   if-no-files-found: error
                   overwrite: true
 
@@ -111,6 +121,13 @@ jobs:
                   name: blockwise-neoforge-mod
                   path: compatibility-artifact
 
+            - name: Download NeoForge GameTest mod
+              if: needs.changes.outputs.required == 'true'
+              uses: actions/download-artifact@v8
+              with:
+                  name: blockwise-neoforge-gametest
+                  path: gametest-artifact
+
             - name: Select compatibility inputs
               if: needs.changes.outputs.required == 'true'
               id: compatibility
@@ -123,8 +140,10 @@ jobs:
                   fi
                   version=$(grep "^$property=" gradle.properties | cut -d= -f2-)
                   mod_jar=$(find compatibility-artifact -name '*.jar' -type f -print -quit)
+                  gametest_jar=$(find gametest-artifact -name '*.jar' -type f -print -quit)
                   echo "neoforge_version=$version" >> "$GITHUB_OUTPUT"
                   echo "mod_jar=$GITHUB_WORKSPACE/$mod_jar" >> "$GITHUB_OUTPUT"
+                  echo "gametest_jar=$GITHUB_WORKSPACE/$gametest_jar" >> "$GITHUB_OUTPUT"
 
             - name: Set up Java 21
               if: needs.changes.outputs.required == 'true'
@@ -147,6 +166,7 @@ jobs:
                   ./gradlew :compatibility:neoforge:runGameTestServer \
                       -Pneoforge_test_version=${{ steps.compatibility.outputs.neoforge_version }} \
                       -Pblockwise_mod_jar=${{ steps.compatibility.outputs.mod_jar }} \
+                      -Pblockwise_gametest_jar=${{ steps.compatibility.outputs.gametest_jar }} \
                       | tee gametest.log
                   grep -E 'All [1-9][0-9]* required tests passed :\)' gametest.log
 
