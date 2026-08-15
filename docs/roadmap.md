@@ -62,6 +62,12 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 - `list_mod_configs`: list mod configurations with strictly narrowing AND filters
 - `get_particle_type`: retrieve one particle type by exact ID
 - `list_particle_types`: list particle types with strictly narrowing AND filters
+- `list_brewing_recipes`: list brewing transformations with strictly narrowing AND filters
+- `list_villager_trades`: list villager trades with strictly narrowing AND filters
+- `list_entity_spawns`: list entity spawn definitions with strictly narrowing AND filters
+- `list_fuels`: list furnace fuels and burn durations with strictly narrowing AND filters
+- `list_compostables`: list compostable items and probabilities with strictly narrowing AND filters
+- `list_key_bindings`: list client key bindings with strictly narrowing AND filters
 
 ## Deferred
 
