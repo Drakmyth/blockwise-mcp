@@ -52,8 +52,7 @@ compatibility/
 
 ## Proposed delivery
 
-1. Apply the accepted cross-loader artifact naming convention.
-2. Isolate NeoForge GameTests from the production artifact and close configuration-test gaps.
-3. Build the cross-loader conformance suite on the normalized structure.
+1. Isolate NeoForge GameTests from the production artifact and close configuration-test gaps.
+2. Build the cross-loader conformance suite on the normalized structure.
 
 Each implementation PR must pass unit tests, loader development tests, production artifact inspection, and all four minimum/recent packaged compatibility checks.

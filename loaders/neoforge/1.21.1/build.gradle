@@ -11,7 +11,11 @@ dependencies {
 }
 
 base {
-    archivesName = "blockwise-mcp-neoforge-${minecraft_version}"
+    archivesName = "blockwisemcp-${minecraft_version}"
+}
+
+tasks.named('jar') {
+    archiveClassifier = 'neoforge'
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {

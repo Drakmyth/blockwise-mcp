@@ -40,6 +40,6 @@ Build the production mod JAR:
 ./gradlew :core:build :mcp-server:build :loaders:fabric:1.21.1:build :loaders:neoforge:1.21.1:build
 ```
 
-Loader-specific distributable JARs are written under `loaders/fabric/1.21.1/build/libs/` and `loaders/neoforge/1.21.1/build/libs/`.
+Loader-specific distributable JARs are written under `loaders/fabric/1.21.1/build/libs/` and `loaders/neoforge/1.21.1/build/libs/`. Published filenames follow `{modid}[-{purpose}]-{minecraft}-{version}-{loader}.jar`.
 
 See [project discovery](docs/discovery.md) for accepted decisions and risks. Future work is prioritized in the [project roadmap](docs/roadmap.md).

@@ -18,7 +18,7 @@ dependencies {
 }
 
 base {
-    archivesName = "blockwise-mcp-fabric-${minecraft_version}"
+    archivesName = "blockwisemcp-${minecraft_version}"
 }
 
 loom {
@@ -42,15 +42,21 @@ var replaceProperties = [
         fabric_api_version: fabric_api_version,
 ]
 
+tasks.named('remapJar') {
+    archiveClassifier = 'fabric'
+}
+
 var gametestJar = tasks.register('gametestJar', Jar) {
     from sourceSets.gametest.output
-    archiveClassifier = 'gametest-dev'
+    archiveBaseName = "blockwisemcp-gametest-dev-${minecraft_version}"
+    archiveClassifier = 'fabric'
 }
 
 var remapGametestJar = tasks.register('remapGametestJar', net.fabricmc.loom.task.RemapJarTask) {
     dependsOn gametestJar
     inputFile = gametestJar.flatMap { it.archiveFile }
-    archiveClassifier = 'gametest'
+    archiveBaseName = "blockwisemcp-gametest-${minecraft_version}"
+    archiveClassifier = 'fabric'
     addNestedDependencies = false
     classpath.from configurations.gametestCompileClasspath
 }
@@ -59,7 +65,18 @@ tasks.named('assemble') {
     dependsOn remapGametestJar
 }
 
+var generateGameTestServerProperties = tasks.register('generateGameTestServerProperties') {
+    var outputFile = layout.buildDirectory.file('run/gameTest/server.properties')
+    outputs.file outputFile
+
+    doLast {
+        outputFile.get().asFile.parentFile.mkdirs()
+        outputFile.get().asFile.text = 'online-mode=false\n'
+    }
+}
+
 tasks.named('runGameTest') {
+    dependsOn generateGameTestServerProperties
     jvmArgs "-Dblockwise.test.expectedVersion=${project.version}"
 }
 

@@ -55,14 +55,14 @@ jobs:
               with:
                   cache-read-only: ${{ github.event.pull_request.head.repo.fork }}
 
-            - name: Build against minimum NeoForge
+            - name: Build all modules against minimum loader stacks
               run: ./gradlew :core:build :mcp-server:build :loaders:fabric:1.21.1:build :loaders:neoforge:1.21.1:build
 
             - name: Upload NeoForge mod
               uses: actions/upload-artifact@v7
               with:
                   name: blockwise-neoforge-mod
-                  path: loaders/neoforge/1.21.1/build/libs/*.jar
+                  path: loaders/neoforge/1.21.1/build/libs/blockwisemcp-*-neoforge.jar
                   if-no-files-found: error
                   overwrite: true
 
@@ -71,8 +71,8 @@ jobs:
               with:
                   name: blockwise-fabric-mod
                   path: |
-                      loaders/fabric/1.21.1/build/libs/*.jar
-                      !loaders/fabric/1.21.1/build/libs/*-gametest*.jar
+                      loaders/fabric/1.21.1/build/libs/blockwisemcp-*-fabric.jar
+                      !loaders/fabric/1.21.1/build/libs/blockwisemcp-gametest-*-fabric.jar
                   if-no-files-found: error
                   overwrite: true
 
@@ -80,7 +80,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   name: blockwise-fabric-gametest
-                  path: loaders/fabric/1.21.1/build/libs/*-gametest.jar
+                  path: loaders/fabric/1.21.1/build/libs/blockwisemcp-gametest-*-fabric.jar
                   if-no-files-found: error
                   overwrite: true
 
