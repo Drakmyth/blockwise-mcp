@@ -1,9 +1,12 @@
-package com.drakmyth.minecraft.blockwisemcp.neoforge;
+package com.drakmyth.minecraft.blockwisemcp.neoforge.gametest;
 
 import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceId;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.IngredientOption;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeDefinition;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeInput;
+import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeBlockwiseMcp;
+import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeLoadedModSource;
+import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeRecipeSource;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.gametest.GameTestHolder;

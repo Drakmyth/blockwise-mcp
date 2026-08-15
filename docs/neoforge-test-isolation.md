@@ -54,6 +54,6 @@ Auxiliary published artifacts place their purpose after the mod ID. Internal com
 - Both NeoForge runtime targets must pass nonzero packaged tests with the two external artifacts.
 - Artifact selectors in CI must avoid ambiguous globbing once production and GameTest JARs share a directory.
 
-## Delivery recommendation
+## Outcome
 
-Use one focused PR for cross-loader artifact naming, since CI consumes both loaders' filenames. Follow with a separate NeoForge GameTest-isolation and configuration-test PR. This keeps naming failures distinct from runtime test-discovery failures.
+NeoForge GameTests use the dedicated `gametest` source set and a separate `blockwisemcp_gametest` mod. The production JAR excludes GameTest classes, structures, and metadata. Minimum and recent packaged validation load the exact production and test artifacts together. NeoForge configuration defaults and range correction have focused JUnit coverage.

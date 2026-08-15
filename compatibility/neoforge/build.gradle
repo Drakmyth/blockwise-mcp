@@ -6,9 +6,12 @@ plugins {
 var blockwiseModJar = providers.gradleProperty('blockwise_mod_jar')
         .map { rootProject.file(it) }
         .orElse(layout.projectDirectory.file('missing-blockwise-mod.jar').asFile)
+var blockwiseGameTestJar = providers.gradleProperty('blockwise_gametest_jar')
+        .map { rootProject.file(it) }
+        .orElse(layout.projectDirectory.file('missing-blockwise-gametest.jar').asFile)
 
 dependencies {
-    runtimeOnly files(blockwiseModJar)
+    runtimeOnly files(blockwiseModJar, blockwiseGameTestJar)
 }
 
 neoForge {
@@ -38,6 +41,9 @@ tasks.named('runGameTestServer') {
     doFirst {
         if (!blockwiseModJar.get().isFile()) {
             throw new GradleException('Set -Pblockwise_mod_jar to a packaged Blockwise mod JAR')
+        }
+        if (!blockwiseGameTestJar.get().isFile()) {
+            throw new GradleException('Set -Pblockwise_gametest_jar to a packaged Blockwise GameTest JAR')
         }
     }
 }

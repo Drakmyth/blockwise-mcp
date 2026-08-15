@@ -3,11 +3,22 @@ plugins {
     id 'net.neoforged.moddev' version "${neoforge_moddev_version}"
 }
 
+sourceSets {
+    gametest
+}
+
 dependencies {
     implementation project(':core')
     implementation project(':mcp-server')
     jarJar project(':core')
     jarJar project(':mcp-server')
+
+    gametestImplementation sourceSets.main.output
+    gametestImplementation project(':core')
+
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 base {
@@ -28,6 +39,7 @@ tasks.withType(AbstractArchiveTask).configureEach {
 
 neoForge {
     version = project.neoforge_version
+    addModdingDependenciesTo sourceSets.gametest
 
     runs {
         client {
@@ -50,6 +62,15 @@ neoForge {
         blockwisemcp {
             sourceSet sourceSets.main
         }
+        blockwisemcp_gametest {
+            sourceSet sourceSets.gametest
+        }
+    }
+
+    unitTest {
+        enable()
+        testedMod = mods.blockwisemcp
+        loadedMods = [mods.blockwisemcp]
     }
 }
 
@@ -68,6 +89,34 @@ var generateModMetadata = tasks.register('generateModMetadata', ProcessResources
 
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
+
+var gameTestProperties = [
+        minecraft_version_range: minecraft_version_range,
+        neoforge_version_range: neoforge_version_range,
+        neoforge_loader_version_range: neoforge_loader_version_range,
+        mod_version: project.version,
+]
+
+tasks.named('processGametestResources') {
+    inputs.properties gameTestProperties
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand gameTestProperties
+    }
+}
+
+var gametestJar = tasks.register('gametestJar', Jar) {
+    from sourceSets.gametest.output
+    archiveBaseName = "blockwisemcp-gametest-${minecraft_version}"
+    archiveClassifier = 'neoforge'
+}
+
+tasks.named('assemble') {
+    dependsOn gametestJar
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
 
 var generateGameTestServerProperties = tasks.register('generateGameTestServerProperties') {
     var outputFile = layout.projectDirectory.file('run/server.properties')

@@ -101,7 +101,7 @@ Provide AI clients with structured access to authoritative data from a running m
 - Pin Gradle, ModDevGradle, and NeoForge versions explicitly.
 - Name published loader archives `{modid}[-{purpose}]-{minecraft}-{version}-{loader}.jar`; place auxiliary purposes immediately after the mod ID and treat compatibility harness outputs as unpublished implementation details.
 - Build the production JAR against NeoForge 21.1.1.
-- Run that exact JAR as an external mod under GameTests on both 21.1.1 and a pinned recent 21.1.x release.
+- Run that exact JAR as an external mod under GameTests on both 21.1.1 and a pinned recent 21.1.x release; keep NeoForge GameTest classes, structures, and metadata in a separate test-only mod.
 - Update the recent NeoForge pin periodically rather than resolving it dynamically.
 - Require stable `build`, `validation (minimum)`, and `validation (latest)` CI checks.
 - Skip expensive CI work when every changed file is Markdown or under `docs/`.
