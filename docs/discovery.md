@@ -43,6 +43,7 @@ Provide AI clients with structured access to authoritative data from a running m
 - The minimum baseline is Fabric Loader `0.15.11` with Fabric API `0.102.1+1.21.1`, the first production release of Fabric API for Minecraft 1.21.1; both expose the required lifecycle, reload, and custom-ingredient APIs. Reconfirm latest versions when compatibility validation is implemented.
 - Preserve NeoForge configuration and give Fabric a loader-appropriate JSON file with equivalent keys, defaults, ranges, and session behavior.
 - Keep the first Fabric recipe adapter explicit even where it duplicates NeoForge mapping; revisit shared Minecraft-version code after more loader implementations establish stable boundaries.
+- Use a narrowly scoped Fabric access widener for vanilla ingredient values because Fabric's public stack expansion loses authoritative tag selectors; keep this version-specific workaround inside the Fabric adapter.
 - Declare the Fabric artifact for universal environments and use common/server APIs, while integrated single-player remains the only initially validated lifecycle.
 - Add required minimum/latest Fabric packaged-GameTest checks before advertising Fabric support.
 

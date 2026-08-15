@@ -82,6 +82,8 @@ Both APIs warn against assuming that enumerated matching stacks are exhaustive f
 
 Initial recipe support should either reject custom ingredients or represent only a subset whose semantics can be proven. A future loader adapter can classify custom ingredients without exposing loader classes to `core`.
 
+NeoForge also exposes vanilla ingredient value variants directly, while Fabric's public `Ingredient.getItems()` expands tags and loses their authoritative selectors. The Fabric 1.21.1 adapter therefore uses a narrowly scoped access widener for the private vanilla value array and item/tag variants. This version-specific workaround preserves the shared exact-item and unexpanded-tag contract without leaking Minecraft internals into `core`.
+
 ### Custom recipe types
 
 Neither loader imposes one introspection contract for custom machine recipes. Mods can register arbitrary recipe classes, serializers, inputs, outputs, fluids, energy, chances, catalysts, and contextual behavior.

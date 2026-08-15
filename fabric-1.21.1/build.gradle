@@ -15,6 +15,10 @@ base {
     archivesName = "blockwise-mcp-fabric-${minecraft_version}"
 }
 
+loom {
+    accessWidenerPath = file('src/main/resources/blockwisemcp.accesswidener')
+}
+
 var replaceProperties = [
         mod_version: project.version,
         minecraft_version: minecraft_version,
