@@ -4,9 +4,16 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 
 ## Sooner
 
-1. Fabric loader support
-2. Dedicated-server and multiplayer lifecycle
-3. Production-ready documentation and automated release generation
+1. Model-facing MCP instructions covering scope, tool relationships, filtering, pagination, and known omissions
+2. Stable error taxonomy and retry guidance
+3. Fabric loader support
+4. Cross-loader conformance suite
+5. Dedicated-server and multiplayer lifecycle
+6. `get_item`: retrieve one item by exact ID
+7. `list_items`: list items with strictly narrowing AND filters
+8. `get_recipe`: retrieve one recipe by exact ID
+9. `list_recipes`: list recipes with strictly narrowing AND filters
+10. Production-ready documentation and automated release generation
 
 ## Later
 
@@ -18,15 +25,8 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 - In-game MCP configuration and manual retry of failed MCP startup
 - Custom/modded recipe types
 - Dynamic recipes (e.g. dyes, potions, armor trim)
-- Model-facing MCP instructions covering scope, tool relationships, filtering, pagination, and known omissions
-- Stable error taxonomy and retry guidance
-- Cross-loader conformance suite
-- `get_item`: retrieve one item by exact ID
-- `list_items`: list items with strictly narrowing AND filters
 - `get_block`: retrieve one block by exact ID
 - `list_blocks`: list blocks with strictly narrowing AND filters
-- `get_recipe`: retrieve one recipe by exact ID
-- `list_recipes`: list recipes with strictly narrowing AND filters
 - `get_tag`: retrieve one tag by exact ID
 - `list_tags`: list tags with strictly narrowing AND filters
 - `get_mod`: retrieve one loaded mod by exact mod ID
