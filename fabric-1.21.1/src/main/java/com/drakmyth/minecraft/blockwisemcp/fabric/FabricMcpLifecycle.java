@@ -54,6 +54,10 @@ final class FabricMcpLifecycle {
         }
     }
 
+    boolean isRunning() {
+        return mcpServer != null;
+    }
+
     void serverStopping() {
         recipeService = null;
         recipeSource = null;

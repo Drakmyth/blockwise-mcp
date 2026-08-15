@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "com.drakmyth.minecraft.blockwisemcp.fabric.BlockwiseFabric"
+    ],
+    "fabric-gametest": [
+      "com.drakmyth.minecraft.blockwisemcp.fabric.BlockwiseFabricGameTests"
     ]
   },
   "accessWidener": "blockwisemcp.accesswidener",

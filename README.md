@@ -4,7 +4,7 @@ An embedded MCP server for querying authoritative data from a running modded Min
 
 ## Status
 
-Blockwise MCP is an early, functional implementation for NeoForge on Minecraft 1.21.1. It exposes loaded-mod metadata and statically representable recipes from integrated single-player sessions. Public releases are not yet available.
+Blockwise MCP is an early, functional implementation for NeoForge and Fabric on Minecraft 1.21.1. It exposes loaded-mod metadata and statically representable recipes from integrated single-player sessions. Public releases are not yet available.
 
 ## Current capabilities
 
@@ -13,16 +13,18 @@ Blockwise MCP is an early, functional implementation for NeoForge on Minecraft 1
 - Configurable enablement, port, and server-thread dispatch timeout
 - `list_loaded_mods` with filtering, stable ordering, and cursor pagination
 - `find_recipes_by_output` for shaped, shapeless, cooking, and stonecutting recipes with static component-free outputs
-- Compatibility validation across NeoForge `[21.1.1,21.2)`
+- Packaged-JAR compatibility validation across NeoForge `[21.1.1,21.2)` and Fabric Loader `0.15.11` or newer with Fabric API `0.102.1+1.21.1` or newer
 
-The endpoint is localhost-only and starts after entering a single-player world. Its production JAR is built against NeoForge 21.1.1 and tested on both the minimum and a recent NeoForge 21.1 runtime.
+The endpoint is localhost-only and starts after entering a single-player world. Loader-specific production JARs are built against their minimum dependencies and tested on both minimum and recent compatible runtimes.
 
 ## Project structure
 
 - `core`: loader-independent contracts and query services
 - `mcp-server`: Streamable HTTP transport and MCP tool definitions
+- `fabric-1.21.1`: Fabric runtime integration and packaged mod
+- `fabric-compatibility-test`: Fabric packaged-JAR compatibility harness
 - `neoforge-1.21.1`: NeoForge runtime integration and packaged mod
-- `neoforge-compatibility-test`: packaged-JAR compatibility harness
+- `neoforge-compatibility-test`: NeoForge packaged-JAR compatibility harness
 
 ## Development
 
@@ -35,9 +37,9 @@ Requires Java 21.
 Build the production mod JAR:
 
 ```shell
-./gradlew :core:build :mcp-server:build :neoforge-1.21.1:build
+./gradlew :core:build :mcp-server:build :fabric-1.21.1:build :neoforge-1.21.1:build
 ```
 
-The distributable JAR is written under `neoforge-1.21.1/build/libs/`.
+Loader-specific distributable JARs are written under `fabric-1.21.1/build/libs/` and `neoforge-1.21.1/build/libs/`.
 
 See [project discovery](docs/discovery.md) for accepted decisions and risks. Future work is prioritized in the [project roadmap](docs/roadmap.md).

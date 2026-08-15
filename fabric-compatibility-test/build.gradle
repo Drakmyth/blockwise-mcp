@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+}
+
+var blockwiseModJar = providers.gradleProperty('blockwise_mod_jar')
+        .map { rootProject.file(it) }
+        .orElse(layout.projectDirectory.file('missing-blockwise-mod.jar').asFile)
+var testLoaderVersion = project.findProperty('fabric_test_loader_version') ?: project.fabric_loader_version
+var testApiVersion = project.findProperty('fabric_test_api_version') ?: project.fabric_api_version
+var testGameTestVersion = project.findProperty('fabric_test_gametest_version') ?: project.fabric_gametest_version
+var installerVersion = '1.1.2'
+var runDirectory = layout.projectDirectory.dir('run')
+var launcherFile = runDirectory.file("fabric-server-${testLoaderVersion}.jar")
+var reportFile = layout.buildDirectory.file('gametest-report.xml')
+
+configurations {
+    fabricApi {
+        transitive = false
+    }
+    fabricGameTest {
+        transitive = false
+    }
+}
+
+dependencies {
+    fabricApi "net.fabricmc.fabric-api:fabric-api:${testApiVersion}"
+    fabricGameTest "net.fabricmc.fabric-api:fabric-gametest-api-v1:${testGameTestVersion}"
+}
+
+var prepareGameTestServer = tasks.register('prepareGameTestServer') {
+    inputs.file blockwiseModJar
+    inputs.files configurations.fabricApi, configurations.fabricGameTest
+    inputs.property 'fabric_loader_version', testLoaderVersion
+    outputs.files launcherFile, runDirectory.file('eula.txt'), runDirectory.file('server.properties')
+    outputs.dir runDirectory.dir('mods')
+
+    doLast {
+        if (!blockwiseModJar.get().isFile()) {
+            throw new GradleException('Set -Pblockwise_mod_jar to a packaged Blockwise Fabric mod JAR')
+        }
+
+        var modsDirectory = runDirectory.dir('mods').asFile.toPath()
+        project.delete modsDirectory.toFile()
+        java.nio.file.Files.createDirectories(modsDirectory)
+        java.nio.file.Files.copy(
+                blockwiseModJar.get().toPath(),
+                modsDirectory.resolve(blockwiseModJar.get().name),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        for (var dependency : [configurations.fabricApi.singleFile, configurations.fabricGameTest.singleFile]) {
+            java.nio.file.Files.copy(
+                    dependency.toPath(),
+                    modsDirectory.resolve(dependency.name),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        }
+
+        java.nio.file.Files.writeString(runDirectory.file('eula.txt').asFile.toPath(), 'eula=true\n')
+        java.nio.file.Files.writeString(
+                runDirectory.file('server.properties').asFile.toPath(),
+                'online-mode=false\n')
+        var launcherUrl = java.net.URI.create(
+                "https://meta.fabricmc.net/v2/versions/loader/${minecraft_version}/${testLoaderVersion}/${installerVersion}/server/jar")
+                .toURL()
+        launcherUrl.withInputStream { input ->
+            java.nio.file.Files.copy(
+                    input,
+                    launcherFile.asFile.toPath(),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        }
+    }
+}
+
+var javaLauncher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(21)
+}
+
+tasks.register('runGameTestServer', Exec) {
+    dependsOn prepareGameTestServer
+    workingDir runDirectory
+    doFirst {
+        commandLine(
+                javaLauncher.get().executablePath.asFile,
+                '-Dfabric-api.gametest',
+                "-Dfabric-api.gametest.report-file=${reportFile.get().asFile}",
+                "-Dblockwise.test.expectedVersion=${project.version}",
+                '-jar',
+                launcherFile.asFile,
+                'nogui')
+    }
+}

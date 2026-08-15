@@ -1,6 +1,6 @@
 # Recipe Portability Reconnaissance
 
-This document compares the recipe surfaces available to Blockwise MCP on NeoForge and Fabric for Minecraft 1.21.1. It informs contract design; it does not commit the project to a Fabric implementation.
+This document compares the recipe surfaces used by Blockwise MCP on NeoForge and Fabric for Minecraft 1.21.1.
 
 ## Scope
 
