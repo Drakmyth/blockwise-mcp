@@ -48,6 +48,7 @@ class BlockwiseMcpServerTest {
                         .build()).build()) {
             var initialization = client.initialize();
             assertEquals("blockwise-mcp", initialization.serverInfo().name());
+            assertEquals(BlockwiseMcpServer.INSTRUCTIONS, initialization.instructions());
 
             var listedTools = client.listTools();
             assertEquals(List.of("list_loaded_mods"), listedTools.tools().stream().map(tool -> tool.name()).toList());
