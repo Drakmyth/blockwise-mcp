@@ -35,7 +35,7 @@ final class FabricMcpLifecycle {
         var modService = new ModService(new FabricLoadedModSource(), UUID.randomUUID());
         recipeSource = new FabricRecipeSource(server);
         recipeService = new RecipeService(recipeSource);
-        var executor = new MinecraftServerToolExecutor(server, timeout);
+        var executor = new FabricMinecraftServerToolExecutor(server, timeout);
         var tools = List.of(
                 ListLoadedModsTool.create(modService, executor),
                 FindRecipesByOutputTool.create(recipeService, executor));

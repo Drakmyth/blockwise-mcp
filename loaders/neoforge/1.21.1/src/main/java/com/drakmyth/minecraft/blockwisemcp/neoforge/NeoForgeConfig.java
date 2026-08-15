@@ -4,7 +4,7 @@ import java.time.Duration;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /** Common configuration for the embedded MCP endpoint. */
-public final class BlockwiseConfig {
+public final class NeoForgeConfig {
     public static final int DEFAULT_PORT = 47831;
     public static final int DEFAULT_DISPATCH_TIMEOUT_SECONDS = 5;
 
@@ -13,7 +13,7 @@ public final class BlockwiseConfig {
     private final ModConfigSpec.IntValue port;
     private final ModConfigSpec.IntValue dispatchTimeoutSeconds;
 
-    public BlockwiseConfig() {
+    public NeoForgeConfig() {
         var builder = new ModConfigSpec.Builder();
         enabled = builder.comment("Whether to start the MCP endpoint with a Minecraft server.")
                 .define("enabled", true);

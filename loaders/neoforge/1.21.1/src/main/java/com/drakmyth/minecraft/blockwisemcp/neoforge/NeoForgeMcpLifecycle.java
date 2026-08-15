@@ -16,12 +16,12 @@ import org.slf4j.Logger;
 public final class NeoForgeMcpLifecycle {
     private final Logger logger;
     private final String version;
-    private final BlockwiseConfig config;
+    private final NeoForgeConfig config;
     private BlockwiseMcpServer mcpServer;
     private NeoForgeRecipeSource recipeSource;
     private RecipeService recipeService;
 
-    public NeoForgeMcpLifecycle(Logger logger, String version, BlockwiseConfig config) {
+    public NeoForgeMcpLifecycle(Logger logger, String version, NeoForgeConfig config) {
         this.logger = logger;
         this.version = version;
         this.config = config;
@@ -37,7 +37,7 @@ public final class NeoForgeMcpLifecycle {
         var modService = new ModService(new NeoForgeLoadedModSource(), UUID.randomUUID());
         recipeSource = new NeoForgeRecipeSource(event.getServer());
         recipeService = new RecipeService(recipeSource);
-        var executor = new MinecraftServerToolExecutor(event.getServer(), timeout);
+        var executor = new NeoForgeMinecraftServerToolExecutor(event.getServer(), timeout);
         var tools = List.of(
                 ListLoadedModsTool.create(modService, executor),
                 FindRecipesByOutputTool.create(recipeService, executor));

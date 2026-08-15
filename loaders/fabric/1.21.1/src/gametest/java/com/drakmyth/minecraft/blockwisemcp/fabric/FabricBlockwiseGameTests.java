@@ -1,43 +1,24 @@
-package com.drakmyth.minecraft.blockwisemcp;
+package com.drakmyth.minecraft.blockwisemcp.fabric;
 
 import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceId;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.IngredientOption;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeDefinition;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeInput;
-import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeLoadedModSource;
-import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeRecipeSource;
+import java.util.List;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.neoforged.neoforge.gametest.GameTestHolder;
 
-@GameTestHolder(Blockwise.MOD_ID)
-public final class BlockwiseGameTests {
-    private BlockwiseGameTests() {
-    }
-
-    @GameTest(template = "empty")
-    public static void initializes(GameTestHelper helper) {
-        if (!Blockwise.isInitialized()) {
-            helper.fail("Blockwise was not initialized");
-            return;
-        }
-
+public final class FabricBlockwiseGameTests implements FabricGameTest {
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    public void startsMcpEndpoint(GameTestHelper helper) {
+        helper.assertTrue(FabricBlockwiseMcp.isMcpRunning(), "Blockwise MCP endpoint should be running");
         helper.succeed();
     }
 
-    @GameTest(template = "empty")
-    public static void startsMcpEndpoint(GameTestHelper helper) {
-        if (!Blockwise.isMcpRunning()) {
-            helper.fail("Blockwise MCP endpoint is not running");
-            return;
-        }
-
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty")
-    public static void exposesSupportedRecipes(GameTestHelper helper) {
-        var source = new NeoForgeRecipeSource(helper.getLevel().getServer());
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    public void exposesSupportedRecipes(GameTestHelper helper) {
+        var source = new FabricRecipeSource(helper.getLevel().getServer());
         var recipes = source.getRecipes().recipes();
 
         var shaped = recipe(recipes, "minecraft:crafting_table");
@@ -59,20 +40,23 @@ public final class BlockwiseGameTests {
                 recipe(recipes, "minecraft:iron_ingot_from_smelting_iron_ore").input() instanceof RecipeInput.Single,
                 "smelting input should be single");
         helper.assertTrue(
-                recipe(recipes, "minecraft:stone_bricks_from_stone_stonecutting").input() instanceof RecipeInput.Single,
+                recipe(recipes, "minecraft:stone_bricks_from_stone_stonecutting").input()
+                        instanceof RecipeInput.Single,
                 "stonecutting input should be single");
         helper.succeed();
     }
 
-    @GameTest(template = "empty")
-    public static void excludesUnsupportedRecipesAndAdvancesGeneration(GameTestHelper helper) {
-        var source = new NeoForgeRecipeSource(helper.getLevel().getServer());
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    public void excludesUnsupportedRecipesAndAdvancesGeneration(GameTestHelper helper) {
+        var source = new FabricRecipeSource(helper.getLevel().getServer());
         var first = source.getRecipes();
         helper.assertTrue(
-                first.recipes().stream().noneMatch(recipe -> recipe.id().equals(ResourceId.parse("minecraft:armor_dye"))),
+                first.recipes().stream()
+                        .noneMatch(recipe -> recipe.id().equals(ResourceId.parse("minecraft:armor_dye"))),
                 "special recipes should be excluded");
         helper.assertTrue(
-                first.recipes().stream().noneMatch(recipe -> recipe.id().equals(ResourceId.parse("minecraft:netherite_sword_smithing"))),
+                first.recipes().stream()
+                        .noneMatch(recipe -> recipe.id().equals(ResourceId.parse("minecraft:netherite_sword_smithing"))),
                 "smithing recipes should be excluded");
 
         source.advanceGeneration();
@@ -80,12 +64,12 @@ public final class BlockwiseGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty")
-    public static void exposesBlockwiseMetadata(GameTestHelper helper) {
-        var blockwise = new NeoForgeLoadedModSource().getLoadedMods().stream()
-                .filter(mod -> mod.id().equals(Blockwise.MOD_ID))
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
+    public void exposesBlockwiseMetadata(GameTestHelper helper) {
+        var blockwise = new FabricLoadedModSource().getLoadedMods().stream()
+                .filter(mod -> mod.id().equals(FabricBlockwiseMcp.MOD_ID))
                 .findFirst()
-                .orElseThrow(() -> new AssertionError("Blockwise is missing from the loaded mod source"));
+                .orElseThrow(() -> new AssertionError("Blockwise MCP is missing from the loaded mod source"));
 
         helper.assertValueEqual(blockwise.displayName(), "Blockwise MCP", "display name");
         helper.assertValueEqual(
@@ -95,7 +79,7 @@ public final class BlockwiseGameTests {
         helper.succeed();
     }
 
-    private static RecipeDefinition recipe(java.util.List<RecipeDefinition> recipes, String id) {
+    private static RecipeDefinition recipe(List<RecipeDefinition> recipes, String id) {
         var resourceId = ResourceId.parse(id);
         return recipes.stream()
                 .filter(recipe -> recipe.id().equals(resourceId))

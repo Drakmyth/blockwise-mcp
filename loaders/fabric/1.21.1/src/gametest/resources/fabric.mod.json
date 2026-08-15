@@ -6,7 +6,7 @@
   "environment": "*",
   "entrypoints": {
     "fabric-gametest": [
-      "com.drakmyth.minecraft.blockwisemcp.fabric.BlockwiseFabricGameTests"
+      "com.drakmyth.minecraft.blockwisemcp.fabric.FabricBlockwiseGameTests"
     ]
   },
   "depends": {
