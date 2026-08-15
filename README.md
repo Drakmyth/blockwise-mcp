@@ -21,10 +21,10 @@ The endpoint is localhost-only and starts after entering a single-player world. 
 
 - `core`: loader-independent contracts and query services
 - `mcp-server`: Streamable HTTP transport and MCP tool definitions
-- `fabric-1.21.1`: Fabric runtime integration and packaged mod
-- `fabric-compatibility-test`: Fabric packaged-JAR compatibility harness
-- `neoforge-1.21.1`: NeoForge runtime integration and packaged mod
-- `neoforge-compatibility-test`: NeoForge packaged-JAR compatibility harness
+- `loaders/fabric/1.21.1`: Fabric runtime integration and packaged mod
+- `loaders/neoforge/1.21.1`: NeoForge runtime integration and packaged mod
+- `compatibility/fabric`: Fabric packaged-JAR compatibility harness
+- `compatibility/neoforge`: NeoForge packaged-JAR compatibility harness
 
 ## Development
 
@@ -37,9 +37,9 @@ Requires Java 21.
 Build the production mod JAR:
 
 ```shell
-./gradlew :core:build :mcp-server:build :fabric-1.21.1:build :neoforge-1.21.1:build
+./gradlew :core:build :mcp-server:build :loaders:fabric:1.21.1:build :loaders:neoforge:1.21.1:build
 ```
 
-Loader-specific distributable JARs are written under `fabric-1.21.1/build/libs/` and `neoforge-1.21.1/build/libs/`.
+Loader-specific distributable JARs are written under `loaders/fabric/1.21.1/build/libs/` and `loaders/neoforge/1.21.1/build/libs/`.
 
 See [project discovery](docs/discovery.md) for accepted decisions and risks. Future work is prioritized in the [project roadmap](docs/roadmap.md).

@@ -10,4 +10,6 @@ plugins {
 }
 
 rootProject.name = 'blockwise-mcp'
-include 'core', 'mcp-server', 'fabric-1.21.1', 'fabric-compatibility-test', 'neoforge-1.21.1', 'neoforge-compatibility-test'
+include 'core', 'mcp-server'
+include 'loaders:fabric:1.21.1', 'loaders:neoforge:1.21.1'
+include 'compatibility:fabric', 'compatibility:neoforge'
