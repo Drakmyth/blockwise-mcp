@@ -14,6 +14,7 @@
 
 - Work on dedicated branches and push focused commits as work progresses.
 - Keep pull requests buildable, deployable, focused, and ideally at or below 350 changed lines.
+- Remove delivered roadmap entries in the same pull request so `docs/roadmap.md` continues to track future work only.
 - Open each pull request after completing and validating its implementation phase, and assign it to Drakmyth.
 - When requesting review, provide a high-value squash message and copy it to the system clipboard using an available platform-native utility (for example, `clip.exe` on Windows).
 - End squash messages with `Co-authored-by: Codex <codex@openai.com>`.
