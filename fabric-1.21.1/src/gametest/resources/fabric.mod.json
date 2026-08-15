@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "blockwisemcp-gametest",
+  "version": "1.0.0",
+  "name": "Blockwise MCP GameTest",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.drakmyth.minecraft.blockwisemcp.fabric.BlockwiseFabricGameTests"
+    ]
+  },
+  "depends": {
+    "blockwisemcp": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 public final class BlockwiseFabric implements ModInitializer {
     public static final String MOD_ID = "blockwisemcp";
     private static final Logger LOGGER = LoggerFactory.getLogger("Blockwise MCP");
+    private static FabricMcpLifecycle lifecycle;
 
     @Override
     public void onInitialize() {
@@ -29,10 +30,14 @@ public final class BlockwiseFabric implements ModInitializer {
             config = FabricConfig.disabled();
         }
 
-        var lifecycle = new FabricMcpLifecycle(LOGGER, version, config);
+        lifecycle = new FabricMcpLifecycle(LOGGER, version, config);
         ServerLifecycleEvents.SERVER_STARTED.register(lifecycle::serverStarted);
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(
                 (server, resourceManager, successful) -> lifecycle.dataPackReloaded(successful));
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> lifecycle.serverStopping());
+    }
+
+    static boolean isMcpRunning() {
+        return lifecycle != null && lifecycle.isRunning();
     }
 }
