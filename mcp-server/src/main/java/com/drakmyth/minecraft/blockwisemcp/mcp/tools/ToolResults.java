@@ -7,10 +7,9 @@ final class ToolResults {
     }
 
     static CallToolResult failure(Exception exception) {
-        var message = exception.getMessage() == null ? "Tool execution failed" : exception.getMessage();
         return CallToolResult.builder()
                 .isError(true)
-                .addTextContent(message)
+                .addTextContent(ToolError.from(exception).message())
                 .build();
     }
 }

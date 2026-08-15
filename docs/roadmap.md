@@ -4,15 +4,14 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 
 ## Sooner
 
-1. Stable error taxonomy and retry guidance
-2. Fabric loader support
-3. Cross-loader conformance suite
-4. Dedicated-server and multiplayer lifecycle
-5. `get_item`: retrieve one item by exact ID
-6. `list_items`: list items with strictly narrowing AND filters
-7. `get_recipe`: retrieve one recipe by exact ID
-8. `list_recipes`: list recipes with strictly narrowing AND filters
-9. Production-ready documentation and automated release generation
+1. Fabric loader support
+2. Cross-loader conformance suite
+3. Dedicated-server and multiplayer lifecycle
+4. `get_item`: retrieve one item by exact ID
+5. `list_items`: list items with strictly narrowing AND filters
+6. `get_recipe`: retrieve one recipe by exact ID
+7. `list_recipes`: list recipes with strictly narrowing AND filters
+8. Production-ready documentation and automated release generation
 
 ## Later
 
