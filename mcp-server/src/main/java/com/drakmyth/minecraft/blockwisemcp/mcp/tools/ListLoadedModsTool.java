@@ -69,16 +69,16 @@ public final class ListLoadedModsTool {
                 .build();
         var definition = SyncToolSpecification.builder()
                 .tool(tool)
-                .callHandler((exchange, call) -> invoke(service, executor, call.arguments()))
+                .callHandler((exchange, call) -> invoke(service, executor, Arguments.from(call.arguments())))
                 .build();
         return () -> definition;
     }
 
-    private static CallToolResult invoke(ModService service, McpToolExecutor executor, Map<String, Object> arguments) {
+    private static CallToolResult invoke(ModService service, McpToolExecutor executor, Arguments arguments) {
         var startedNanos = System.nanoTime();
-        var filter = (String) arguments.get("filter");
-        var limit = arguments.get("limit") instanceof Number value ? value.intValue() : null;
-        var cursor = (String) arguments.get("cursor");
+        var filter = arguments.filter();
+        var limit = arguments.limit();
+        var cursor = arguments.cursor();
         try {
             var request = new ListLoadedModsRequest(filter, limit, cursor);
             var page = executor.execute(() -> service.listLoadedMods(request));
@@ -113,6 +113,16 @@ public final class ListLoadedModsTool {
                     ToolLogging.elapsedMillis(startedNanos),
                     exception);
             return ToolResults.failure(exception);
+        }
+    }
+
+    private record Arguments(String filter, Integer limit, String cursor) {
+        private static Arguments from(Map<String, Object> values) {
+            var arguments = new ToolArguments(values);
+            return new Arguments(
+                    arguments.optionalString("filter"),
+                    arguments.optionalInteger("limit"),
+                    arguments.optionalString("cursor"));
         }
     }
 

@@ -55,7 +55,7 @@ public final class FindRecipesByOutputTool {
                 .build();
         var definition = SyncToolSpecification.builder()
                 .tool(tool)
-                .callHandler((exchange, call) -> invoke(service, executor, call.arguments()))
+                .callHandler((exchange, call) -> invoke(service, executor, Arguments.from(call.arguments())))
                 .build();
         return () -> definition;
     }
@@ -63,11 +63,11 @@ public final class FindRecipesByOutputTool {
     private static CallToolResult invoke(
             RecipeService service,
             McpToolExecutor executor,
-            Map<String, Object> arguments) {
+            Arguments arguments) {
         var startedNanos = System.nanoTime();
-        var outputItemId = (String) arguments.get("outputItemId");
-        var limit = arguments.get("limit") instanceof Number value ? value.intValue() : null;
-        var cursor = (String) arguments.get("cursor");
+        var outputItemId = arguments.outputItemId();
+        var limit = arguments.limit();
+        var cursor = arguments.cursor();
         try {
             var request = new FindRecipesByOutputRequest(ResourceId.parse(outputItemId), limit, cursor);
             var page = executor.execute(() -> service.findByOutput(request));
@@ -102,6 +102,16 @@ public final class FindRecipesByOutputTool {
                     ToolLogging.elapsedMillis(startedNanos),
                     exception);
             return ToolResults.failure(exception);
+        }
+    }
+
+    private record Arguments(String outputItemId, Integer limit, String cursor) {
+        private static Arguments from(Map<String, Object> values) {
+            var arguments = new ToolArguments(values);
+            return new Arguments(
+                    arguments.requiredString("outputItemId"),
+                    arguments.optionalInteger("limit"),
+                    arguments.optionalString("cursor"));
         }
     }
 
