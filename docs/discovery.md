@@ -38,7 +38,7 @@ Provide AI clients with structured access to authoritative data from a running m
 ### Tool contracts
 
 - Expose focused tools rather than a generic query language.
-- Default resource tooling to an exact `get_<resource>` operation and a paginated `search_<resources>` operation whose optional filters combine with strictly narrowing AND semantics; allow exceptions when cardinality, output shape, cost, or semantics differ materially.
+- Default resource tooling to an exact `get_<resource>` operation and a paginated `list_<resources>` operation whose optional filters combine with strictly narrowing AND semantics; reserve `search` for fuzzy or relevance-based discovery, and allow exceptions when cardinality, output shape, cost, or semantics differ materially.
 - The planned initial tools are `list_loaded_mods` and `find_recipes_by_output`.
 - Successful tool responses use structured content without a redundant prose summary.
 - Runtime tool failures use `isError: true` with text content and no structured content, which remains reserved for the success output schema.
