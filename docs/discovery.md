@@ -107,6 +107,15 @@ Provide AI clients with structured access to authoritative data from a running m
 - Skip expensive CI work when every changed file is Markdown or under `docs/`.
 - Allow trusted same-repository pull requests to write Gradle caches; keep fork pull requests read-only.
 
+### Future platforms
+
+- Forge and Quilt are intended future production targets.
+- Target Minecraft 26.1.2 as the next version after 1.21.1 rather than adding an incremental 1.21.x version without demonstrated demand.
+- Preview and beta dependencies may inform planning, but production implementation requires a reviewed production-ready stack.
+- Build externally observable conformance for the current Fabric and NeoForge implementations before adding another loader or Minecraft version.
+- Keep shared modules on their oldest required Java target; Minecraft 26.1.2 loader and compatibility modules require Java 25.
+- See [future platform reconnaissance](future-platform-reconnaissance.md) for availability evidence and risks.
+
 ## Provisional direction
 
 - Query live Minecraft managers first; add snapshots or indexes only when dataset size or measurements justify them.

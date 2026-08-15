@@ -17,6 +17,7 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 - Recipe ingredient/output data components
 - Smithing recipes
 - Recipe experience rewards and processing durations
+- Minecraft 26.1.2 support
 - Quilt loader support
 - Forge loader support
 - In-game MCP configuration and manual retry of failed MCP startup
