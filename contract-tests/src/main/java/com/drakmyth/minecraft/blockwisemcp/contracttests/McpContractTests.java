@@ -5,6 +5,7 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator.ValidationResponse;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import java.time.Duration;
 import java.util.List;
@@ -69,6 +70,97 @@ public final class McpContractTests {
                     "GameTest display name");
             requireEquals(null, output.get("nextCursor"), "loaded-mod cursor");
         }
+    }
+
+    /** Verifies deterministic recipe results and pagination through the real MCP endpoint. */
+    public static void verifyRecipes() {
+        var transport = HttpClientStreamableHttpTransport.builder(BASE_URL)
+                .endpoint(ENDPOINT)
+                .connectTimeout(TIMEOUT)
+                .build();
+        try (var client = McpClient.sync(transport)
+                .initializationTimeout(TIMEOUT)
+                .requestTimeout(TIMEOUT)
+                .jsonSchemaValidator((schema, value) -> ValidationResponse.asValid(""))
+                .build()) {
+            client.initialize();
+            var expectedResponse = expectedRecipesResponse();
+            var expectedItems = list(expectedResponse.get("items"), "expected recipe items");
+            var unpaged = client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                    .arguments(Map.of("outputItemId", "minecraft:debug_stick"))
+                    .build());
+            require(!Boolean.TRUE.equals(unpaged.isError()), "unpaged recipe call must succeed");
+            requireEquals(1, unpaged.content().size(), "successful recipe text-content count");
+            require(unpaged.content().getFirst() instanceof TextContent, "successful recipe content must be text");
+            var text = ((TextContent) unpaged.content().getFirst()).text();
+            require(text.contains("blockwisemcp:contract_shaped"), "recipe text content must mirror fixtures");
+            var unpagedOutput = map(unpaged.structuredContent(), "unpaged recipe output");
+            requireEquals(expectedResponse, unpagedOutput, "recipe response");
+
+            var paged = new java.util.ArrayList<Object>();
+            Object cursor = null;
+            for (var index = 0; index < expectedItems.size(); index++) {
+                var arguments = new java.util.LinkedHashMap<String, Object>();
+                arguments.put("outputItemId", "minecraft:debug_stick");
+                arguments.put("limit", 1);
+                if (cursor != null) {
+                    arguments.put("cursor", cursor);
+                }
+                var page = client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                        .arguments(arguments)
+                        .build());
+                require(!Boolean.TRUE.equals(page.isError()), "recipe page " + index + " must succeed");
+                var pageOutput = map(page.structuredContent(), "recipe page " + index);
+                var items = list(pageOutput.get("items"), "recipe page items");
+                requireEquals(1, items.size(), "recipe page size");
+                paged.add(items.getFirst());
+                cursor = pageOutput.get("nextCursor");
+                require(
+                        index == expectedItems.size() - 1 ? cursor == null : cursor instanceof String,
+                        "recipe page " + index + " cursor state");
+            }
+            requireEquals(expectedItems, paged, "paginated recipe fixtures");
+        }
+    }
+
+    // Keep expected MCP output independent from recipe JSON inputs so fixture or mapping drift fails visibly.
+    private static Map<String, Object> expectedRecipesResponse() {
+        var output = List.of(Map.of("itemId", "minecraft:debug_stick", "count", 1));
+        var items = List.of(
+                Map.of(
+                        "id", "blockwisemcp:contract_shaped",
+                        "type", "minecraft:crafting_shaped",
+                        "input", Map.of(
+                                "format", "shaped",
+                                "rows", List.of(
+                                        List.of(Map.of("options", List.of("minecraft:dirt"))),
+                                        List.of(Map.of("options", List.of("#minecraft:planks"))))),
+                        "outputs", output),
+                Map.of(
+                        "id", "blockwisemcp:contract_shapeless",
+                        "type", "minecraft:crafting_shapeless",
+                        "input", Map.of(
+                                "format", "shapeless",
+                                "ingredients", List.of(Map.of("options", List.of("minecraft:cobblestone")))),
+                        "outputs", output),
+                Map.of(
+                        "id", "blockwisemcp:contract_smelting",
+                        "type", "minecraft:smelting",
+                        "input", Map.of(
+                                "format", "single",
+                                "ingredient", Map.of("options", List.of("minecraft:sand"))),
+                        "outputs", output),
+                Map.of(
+                        "id", "blockwisemcp:contract_stonecutting",
+                        "type", "minecraft:stonecutting",
+                        "input", Map.of(
+                                "format", "single",
+                                "ingredient", Map.of("options", List.of("minecraft:stone"))),
+                        "outputs", output));
+        var response = new java.util.LinkedHashMap<String, Object>();
+        response.put("items", items);
+        response.put("nextCursor", null);
+        return response;
     }
 
     private static McpSyncClient openInitializedClient() {

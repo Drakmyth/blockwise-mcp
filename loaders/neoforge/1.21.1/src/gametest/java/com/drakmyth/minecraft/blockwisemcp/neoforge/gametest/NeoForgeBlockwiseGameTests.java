@@ -54,6 +54,14 @@ public final class NeoForgeBlockwiseGameTests {
         awaitContractTest(helper, contractTest);
     }
 
+    @GameTest(template = "empty", timeoutTicks = 240000)
+    public static void testsRecipeContractOverMcp(GameTestHelper helper) {
+        var contractTest = CompletableFuture.runAsync(
+                McpContractTests::verifyRecipes,
+                command -> Thread.ofPlatform().name("blockwise-recipe-contract-tests").start(command));
+        awaitContractTest(helper, contractTest);
+    }
+
     @GameTest(template = "empty")
     public static void exposesSupportedRecipes(GameTestHelper helper) {
         var source = new NeoForgeRecipeSource(helper.getLevel().getServer());
