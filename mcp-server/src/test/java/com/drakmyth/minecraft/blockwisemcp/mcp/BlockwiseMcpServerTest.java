@@ -30,13 +30,16 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 
 class BlockwiseMcpServerTest {
+    private static final UUID GENERATION = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID NEXT_GENERATION = UUID.fromString("00000000-0000-0000-0000-000000000002");
+
     @Test
     void exposesLoadedModsThroughStreamableHttp() throws Exception {
         var service = new ModService(
                 () -> List.of(
                         new LoadedMod("zeta", "Craft Helper", "1"),
                         new LoadedMod("alpha", "Alpha", "2")),
-                UUID.randomUUID());
+                GENERATION);
         var tools = List.of(ListLoadedModsTool.create(service, directExecutor()));
         try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
                 var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
@@ -72,7 +75,7 @@ class BlockwiseMcpServerTest {
     @Test
     void exposesRecipesThroughStreamableHttp() throws Exception {
         var outputId = ResourceId.parse("minecraft:result");
-        var generation = UUID.randomUUID();
+        var generation = GENERATION;
         var ingredient = new RecipeIngredient(List.of(
                 new IngredientOption.Item(ResourceId.parse("minecraft:coal")),
                 new IngredientOption.Tag(ResourceId.parse("c:coals"))));
@@ -131,7 +134,7 @@ class BlockwiseMcpServerTest {
                 () -> {
                     throw new IllegalStateException("Loaded mod source failed");
                 },
-                UUID.randomUUID());
+                GENERATION);
         var tools = List.of(ListLoadedModsTool.create(service, directExecutor()));
         try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
                 var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
@@ -149,7 +152,7 @@ class BlockwiseMcpServerTest {
 
     @Test
     void reportsStaleRecipeCursorAsToolError() throws Exception {
-        var generation = new AtomicReference<>(UUID.randomUUID());
+        var generation = new AtomicReference<>(GENERATION);
         var outputId = ResourceId.parse("minecraft:result");
         var ingredient = new RecipeIngredient(List.of(
                 new IngredientOption.Item(ResourceId.parse("minecraft:coal"))));
@@ -171,7 +174,7 @@ class BlockwiseMcpServerTest {
             var cursor = asMap(first.structuredContent()).get("nextCursor");
             assertNotNull(cursor);
 
-            generation.set(UUID.randomUUID());
+            generation.set(NEXT_GENERATION);
             var stale = client.callTool(CallToolRequest.builder("find_recipes_by_output")
                     .arguments(Map.of("outputItemId", outputId.toString(), "limit", 1, "cursor", cursor))
                     .build());
@@ -183,8 +186,8 @@ class BlockwiseMcpServerTest {
 
     @Test
     void describesEveryPublishedSchemaProperty() throws Exception {
-        var modService = new ModService(() -> List.of(), UUID.randomUUID());
-        var recipeService = new RecipeService(() -> new RecipeSnapshot(UUID.randomUUID(), List.of()));
+        var modService = new ModService(() -> List.of(), GENERATION);
+        var recipeService = new RecipeService(() -> new RecipeSnapshot(GENERATION, List.of()));
         var tools = List.of(
                 ListLoadedModsTool.create(modService, directExecutor()),
                 FindRecipesByOutputTool.create(recipeService, directExecutor()));
