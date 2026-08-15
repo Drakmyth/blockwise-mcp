@@ -25,12 +25,43 @@ loom {
     accessWidenerPath = file('src/main/resources/blockwisemcp.accesswidener')
 }
 
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'blockwisemcp-gametest'
+        enableGameTests = true
+        enableClientGameTests = false
+        eula = true
+    }
+}
+
 var replaceProperties = [
         mod_version: project.version,
         minecraft_version: minecraft_version,
         fabric_loader_version: fabric_loader_version,
         fabric_api_version: fabric_api_version,
 ]
+
+var gametestJar = tasks.register('gametestJar', Jar) {
+    from sourceSets.gametest.output
+    archiveClassifier = 'gametest-dev'
+}
+
+var remapGametestJar = tasks.register('remapGametestJar', net.fabricmc.loom.task.RemapJarTask) {
+    dependsOn gametestJar
+    inputFile = gametestJar.flatMap { it.archiveFile }
+    archiveClassifier = 'gametest'
+    addNestedDependencies = false
+    classpath.from configurations.gametestCompileClasspath
+}
+
+tasks.named('assemble') {
+    dependsOn remapGametestJar
+}
+
+tasks.named('runGameTest') {
+    jvmArgs "-Dblockwise.test.expectedVersion=${project.version}"
+}
 
 tasks.named('test') {
     useJUnitPlatform()

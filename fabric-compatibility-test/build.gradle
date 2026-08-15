@@ -5,6 +5,9 @@ plugins {
 var blockwiseModJar = providers.gradleProperty('blockwise_mod_jar')
         .map { rootProject.file(it) }
         .orElse(layout.projectDirectory.file('missing-blockwise-mod.jar').asFile)
+var blockwiseGameTestJar = providers.gradleProperty('blockwise_gametest_jar')
+        .map { rootProject.file(it) }
+        .orElse(layout.projectDirectory.file('missing-blockwise-gametest.jar').asFile)
 var testLoaderVersion = project.findProperty('fabric_test_loader_version') ?: project.fabric_loader_version
 var testApiVersion = project.findProperty('fabric_test_api_version') ?: project.fabric_api_version
 var testGameTestVersion = project.findProperty('fabric_test_gametest_version') ?: project.fabric_gametest_version
@@ -28,7 +31,7 @@ dependencies {
 }
 
 var prepareGameTestServer = tasks.register('prepareGameTestServer') {
-    inputs.file blockwiseModJar
+    inputs.files blockwiseModJar, blockwiseGameTestJar
     inputs.files configurations.fabricApi, configurations.fabricGameTest
     inputs.property 'fabric_loader_version', testLoaderVersion
     outputs.files launcherFile, runDirectory.file('eula.txt'), runDirectory.file('server.properties')
@@ -38,14 +41,19 @@ var prepareGameTestServer = tasks.register('prepareGameTestServer') {
         if (!blockwiseModJar.get().isFile()) {
             throw new GradleException('Set -Pblockwise_mod_jar to a packaged Blockwise Fabric mod JAR')
         }
+        if (!blockwiseGameTestJar.get().isFile()) {
+            throw new GradleException('Set -Pblockwise_gametest_jar to a packaged Blockwise Fabric GameTest JAR')
+        }
 
         var modsDirectory = runDirectory.dir('mods').asFile.toPath()
         project.delete modsDirectory.toFile()
         java.nio.file.Files.createDirectories(modsDirectory)
-        java.nio.file.Files.copy(
-                blockwiseModJar.get().toPath(),
-                modsDirectory.resolve(blockwiseModJar.get().name),
-                java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        for (var mod : [blockwiseModJar.get(), blockwiseGameTestJar.get()]) {
+            java.nio.file.Files.copy(
+                    mod.toPath(),
+                    modsDirectory.resolve(mod.name),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+        }
         for (var dependency : [configurations.fabricApi.singleFile, configurations.fabricGameTest.singleFile]) {
             java.nio.file.Files.copy(
                     dependency.toPath(),

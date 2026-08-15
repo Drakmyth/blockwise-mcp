@@ -70,7 +70,17 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   name: blockwise-fabric-mod
-                  path: fabric-1.21.1/build/libs/*.jar
+                  path: |
+                      fabric-1.21.1/build/libs/*.jar
+                      !fabric-1.21.1/build/libs/*-gametest*.jar
+                  if-no-files-found: error
+                  overwrite: true
+
+            - name: Upload Fabric GameTest mod
+              uses: actions/upload-artifact@v7
+              with:
+                  name: blockwise-fabric-gametest
+                  path: fabric-1.21.1/build/libs/*-gametest.jar
                   if-no-files-found: error
                   overwrite: true
 
@@ -167,6 +177,13 @@ jobs:
                   name: blockwise-fabric-mod
                   path: compatibility-artifact
 
+            - name: Download Fabric GameTest mod
+              if: needs.changes.outputs.required == 'true'
+              uses: actions/download-artifact@v8
+              with:
+                  name: blockwise-fabric-gametest
+                  path: gametest-artifact
+
             - name: Select Fabric compatibility inputs
               if: needs.changes.outputs.required == 'true'
               id: compatibility
@@ -181,10 +198,12 @@ jobs:
                   api=$(grep "^${prefix}_api_version=" gradle.properties | cut -d= -f2-)
                   gametest=$(grep "^${prefix}_gametest_version=" gradle.properties | cut -d= -f2-)
                   mod_jar=$(find compatibility-artifact -name '*.jar' -type f -print -quit)
+                  gametest_jar=$(find gametest-artifact -name '*.jar' -type f -print -quit)
                   echo "loader_version=$loader" >> "$GITHUB_OUTPUT"
                   echo "api_version=$api" >> "$GITHUB_OUTPUT"
                   echo "gametest_version=$gametest" >> "$GITHUB_OUTPUT"
                   echo "mod_jar=$GITHUB_WORKSPACE/$mod_jar" >> "$GITHUB_OUTPUT"
+                  echo "gametest_jar=$GITHUB_WORKSPACE/$gametest_jar" >> "$GITHUB_OUTPUT"
 
             - name: Set up Java 21
               if: needs.changes.outputs.required == 'true'
@@ -210,6 +229,7 @@ jobs:
                       -Pfabric_test_api_version=${{ steps.compatibility.outputs.api_version }} \
                       -Pfabric_test_gametest_version=${{ steps.compatibility.outputs.gametest_version }} \
                       -Pblockwise_mod_jar=${{ steps.compatibility.outputs.mod_jar }} \
+                      -Pblockwise_gametest_jar=${{ steps.compatibility.outputs.gametest_jar }} \
                       --no-configuration-cache \
                       | tee fabric-gametest.log
                   grep -E 'All [1-9][0-9]* required tests passed :\)' fabric-gametest.log
