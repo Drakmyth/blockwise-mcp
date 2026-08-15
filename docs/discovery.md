@@ -40,7 +40,7 @@ Provide AI clients with structured access to authoritative data from a running m
 
 - Require full behavioral parity with the NeoForge artifact, delivered through focused intermediate PRs that do not advertise incomplete Fabric support.
 - Support the widest practical Minecraft 1.21.1 compatibility window: build against the oldest viable Fabric stack and validate the exact production JAR against that minimum and the latest compatible stack with nonzero in-game assertions.
-- The initial viable baseline is Fabric Loader `0.15.11` with Fabric API `0.101.2+1.21.1`; both expose the required lifecycle, reload, and custom-ingredient APIs. Reconfirm latest versions when compatibility validation is implemented.
+- The minimum baseline is Fabric Loader `0.15.11` with Fabric API `0.102.1+1.21.1`, the first production release of Fabric API for Minecraft 1.21.1; both expose the required lifecycle, reload, and custom-ingredient APIs. Reconfirm latest versions when compatibility validation is implemented.
 - Preserve NeoForge configuration and give Fabric a loader-appropriate JSON file with equivalent keys, defaults, ranges, and session behavior.
 - Keep the first Fabric recipe adapter explicit even where it duplicates NeoForge mapping; revisit shared Minecraft-version code after more loader implementations establish stable boundaries.
 - Declare the Fabric artifact for universal environments and use common/server APIs, while integrated single-player remains the only initially validated lifecycle.
