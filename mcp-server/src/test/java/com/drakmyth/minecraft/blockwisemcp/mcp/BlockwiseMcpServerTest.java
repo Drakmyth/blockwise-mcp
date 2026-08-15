@@ -20,20 +20,29 @@ import com.drakmyth.minecraft.blockwisemcp.mcp.tools.ListLoadedModsTool;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 
 class BlockwiseMcpServerTest {
     @Test
     void exposesLoadedModsThroughStreamableHttp() throws Exception {
+        var failSource = new AtomicBoolean();
         var service = new ModService(
-                () -> List.of(
-                        new LoadedMod("zeta", "Craft Helper", "1"),
-                        new LoadedMod("alpha", "Alpha", "2")),
+                () -> {
+                    if (failSource.get()) {
+                        throw new IllegalStateException("Loaded mod source failed");
+                    }
+                    return List.of(
+                            new LoadedMod("zeta", "Craft Helper", "1"),
+                            new LoadedMod("alpha", "Alpha", "2"));
+                },
                 UUID.randomUUID());
         var tools = List.of(ListLoadedModsTool.create(service, directExecutor()));
         try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
@@ -64,13 +73,19 @@ class BlockwiseMcpServerTest {
                     .arguments(Map.of("limit", "many"))
                     .build());
             assertTrue(invalid.isError());
+
+            failSource.set(true);
+            var failed = client.callTool(CallToolRequest.builder("list_loaded_mods").arguments(Map.of()).build());
+            assertTrue(failed.isError());
+            assertEquals(null, failed.structuredContent());
+            assertEquals("Loaded mod source failed", ((TextContent) failed.content().getFirst()).text());
         }
     }
 
     @Test
     void exposesRecipesThroughStreamableHttp() throws Exception {
         var outputId = ResourceId.parse("minecraft:result");
-        var generation = UUID.randomUUID();
+        var generation = new AtomicReference<>(UUID.randomUUID());
         var ingredient = new RecipeIngredient(List.of(
                 new IngredientOption.Item(ResourceId.parse("minecraft:coal")),
                 new IngredientOption.Tag(ResourceId.parse("c:coals"))));
@@ -82,7 +97,7 @@ class BlockwiseMcpServerTest {
                         "example:ignored",
                         new RecipeInput.Single(ingredient),
                         ResourceId.parse("minecraft:other_result")));
-        var service = new RecipeService(() -> new RecipeSnapshot(generation, recipes));
+        var service = new RecipeService(() -> new RecipeSnapshot(generation.get(), recipes));
         var tools = List.of(FindRecipesByOutputTool.create(service, directExecutor()));
         try (var server = BlockwiseMcpServer.start(0, Duration.ofSeconds(5), "test", tools);
                 var client = McpClient.sync(HttpClientStreamableHttpTransport.builder(
@@ -115,6 +130,17 @@ class BlockwiseMcpServerTest {
                     .build());
             var secondItem = asMap(((List<?>) asMap(second.structuredContent()).get("items")).getFirst());
             assertEquals("single", asMap(secondItem.get("input")).get("format"));
+
+            generation.set(UUID.randomUUID());
+            var stale = client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                    .arguments(Map.of(
+                            "outputItemId", outputId.toString(),
+                            "limit", 2,
+                            "cursor", firstOutput.get("nextCursor")))
+                    .build());
+            assertTrue(stale.isError());
+            assertEquals(null, stale.structuredContent());
+            assertEquals("Cursor is stale", ((TextContent) stale.content().getFirst()).text());
 
             var invalid = client.callTool(CallToolRequest.builder("find_recipes_by_output")
                     .arguments(Map.of("outputItemId", "result"))
