@@ -42,7 +42,39 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 - `list_structures`: list structures with strictly narrowing AND filters
 - `get_dimension`: retrieve one dimension by exact ID
 - `list_dimensions`: list dimensions with strictly narrowing AND filters
+- `get_loot_table`: retrieve one loot table by exact ID
+- `list_loot_tables`: list loot tables with strictly narrowing AND filters
+- `get_advancement`: retrieve one advancement by exact ID
+- `list_advancements`: list advancements with strictly narrowing AND filters
+- `get_attribute`: retrieve one attribute by exact ID
+- `list_attributes`: list attributes with strictly narrowing AND filters
+- `get_damage_type`: retrieve one damage type by exact ID
+- `list_damage_types`: list damage types with strictly narrowing AND filters
+- `get_potion`: retrieve one potion by exact ID
+- `list_potions`: list potions with strictly narrowing AND filters
+- `get_creative_tab`: retrieve one creative tab by exact ID
+- `list_creative_tabs`: list creative tabs with strictly narrowing AND filters
+- `get_command`: retrieve one available command by exact name
+- `list_commands`: list available commands with strictly narrowing AND filters
+- `get_game_rule`: retrieve one active game rule by exact name
+- `list_game_rules`: list active game rules with strictly narrowing AND filters
+- `get_mod_config`: retrieve one mod configuration by exact ID
+- `list_mod_configs`: list mod configurations with strictly narrowing AND filters
+- `get_particle_type`: retrieve one particle type by exact ID
+- `list_particle_types`: list particle types with strictly narrowing AND filters
 
 ## Deferred
 
 - Serverless/Offline MCP availability
+- `get_configured_feature`: retrieve one configured feature by exact ID
+- `list_configured_features`: list configured features with strictly narrowing AND filters
+- `get_placed_feature`: retrieve one placed feature by exact ID
+- `list_placed_features`: list placed features with strictly narrowing AND filters
+- `get_structure_set`: retrieve one structure set by exact ID
+- `list_structure_sets`: list structure sets with strictly narrowing AND filters
+- `get_template_pool`: retrieve one template pool by exact ID
+- `list_template_pools`: list template pools with strictly narrowing AND filters
+- `get_global_loot_modifier`: retrieve one global loot modifier by exact ID
+- `list_global_loot_modifiers`: list global loot modifiers with strictly narrowing AND filters
+- `get_data_map`: retrieve one data map by exact ID
+- `list_data_maps`: list data maps with strictly narrowing AND filters
