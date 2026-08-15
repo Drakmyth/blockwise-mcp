@@ -107,7 +107,6 @@ Provide AI clients with structured access to authoritative data from a running m
 
 ## Open questions
 
-- Is `Blockwise MCP` sufficiently available and compliant with Minecraft branding guidance?
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
 - How should type-specific recipe context, custom recipes, and dynamic recipes report semantics that cannot be represented faithfully?
