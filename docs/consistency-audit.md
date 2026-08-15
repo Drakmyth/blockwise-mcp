@@ -24,10 +24,9 @@ compatibility/
 
 ### Toolchain
 
-- Current versions are Gradle 9.2.1, Fabric Loom 1.15.5, and ModDevGradle 2.0.143.
-- Latest stable mutually compatible candidates are Gradle 9.7.0, Fabric Loom 1.17.19, and ModDevGradle 2.0.144. Loom 1.17.19 requires Gradle 9.5 or newer.
-- ModDevGradle's version is duplicated in two build scripts while Loom is property-driven.
-- Runtime baselines are independent from build plugins and must remain pinned to the existing minimum/recent matrices.
+- The build uses Gradle 9.7.0, Fabric Loom 1.17.19, and ModDevGradle 2.0.144.
+- Loom and ModDevGradle versions are centralized in Gradle properties.
+- Runtime baselines remain independently pinned to the existing minimum/recent matrices.
 
 ### Naming and packages
 
@@ -53,8 +52,7 @@ compatibility/
 
 ## Proposed delivery
 
-1. Upgrade Gradle to 9.7.0, Loom to 1.17.19, and ModDevGradle to 2.0.144; centralize plugin versions.
-2. Investigate and, if viable, isolate NeoForge GameTests from the production artifact and close configuration-test gaps.
-3. Build the cross-loader conformance suite on the normalized structure.
+1. Investigate and, if viable, isolate NeoForge GameTests from the production artifact and close configuration-test gaps.
+2. Build the cross-loader conformance suite on the normalized structure.
 
 Each implementation PR must pass unit tests, loader development tests, production artifact inspection, and all four minimum/recent packaged compatibility checks.
