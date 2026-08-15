@@ -32,12 +32,15 @@ Provide AI clients with structured access to authoritative data from a running m
 - Initial configuration contains `enabled`, `port`, and `dispatchTimeoutSeconds`.
 - Preserve SDK JSON Schema validation under NeoForge by repackaging networknt schema resources beneath a module-visible package and redirecting scoped resource lookup.
 - Keep `McpToolDefinition` as the project-owned SDK registration boundary until more tools justify a richer abstraction.
+- Log lifecycle transitions and successful recipe invalidation at `INFO`, normal tool summaries at `DEBUG`, and unexpected tool failures at `ERROR` with stack traces.
+- Tool summaries explicitly select safe fields: include item IDs, limits, truncated and escaped filters, result counts, and duration; record only cursor presence, never cursor contents.
 
 ### Tool contracts
 
 - Expose focused tools rather than a generic query language.
 - The planned initial tools are `list_loaded_mods` and `find_recipes_by_output`.
 - Successful tool responses use structured content without a redundant prose summary.
+- Runtime tool failures use `isError: true` with text content and no structured content, which remains reserved for the success output schema.
 - Do not encode contract versions in tool names.
 - Before 1.0, documented schemas may change incompatibly. From 1.0 onward, removals and semantic changes require a major schema version.
 - Describe every published input and output property in its JSON Schema.
