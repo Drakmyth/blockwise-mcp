@@ -1,6 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.mcp.tools;
 
 import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceId;
+import com.drakmyth.minecraft.blockwisemcp.core.pagination.InvalidCursorException;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.FindRecipesByOutputRequest;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeDefinition;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeIngredient;
@@ -15,8 +16,11 @@ import io.modelcontextprotocol.spec.McpSchema.Tool;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class FindRecipesByOutputTool {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FindRecipesByOutputTool.class);
     private static final Map<String, Object> INGREDIENT_SCHEMA = ingredientSchema("object");
     private static final Map<String, Object> NULLABLE_INGREDIENT_SCHEMA =
             ingredientSchema(List.of("object", "null"));
@@ -60,17 +64,43 @@ public final class FindRecipesByOutputTool {
             RecipeService service,
             McpToolExecutor executor,
             Map<String, Object> arguments) {
+        var startedNanos = System.nanoTime();
+        var outputItemId = (String) arguments.get("outputItemId");
+        var limit = arguments.get("limit") instanceof Number value ? value.intValue() : null;
+        var cursor = (String) arguments.get("cursor");
         try {
-            var request = new FindRecipesByOutputRequest(
-                    ResourceId.parse((String) arguments.get("outputItemId")),
-                    arguments.get("limit") instanceof Number limit ? limit.intValue() : null,
-                    (String) arguments.get("cursor"));
+            var request = new FindRecipesByOutputRequest(ResourceId.parse(outputItemId), limit, cursor);
             var page = executor.execute(() -> service.findByOutput(request));
+            var items = page.items().stream().map(FindRecipesByOutputTool::recipeMap).toList();
             var output = new LinkedHashMap<String, Object>();
-            output.put("items", page.items().stream().map(FindRecipesByOutputTool::recipeMap).toList());
+            output.put("items", items);
             output.put("nextCursor", page.nextCursor());
+            LOGGER.debug(
+                    "find_recipes_by_output outputItemId={} limit={} cursorPresent={} results={} hasNext={} durationMs={}",
+                    outputItemId,
+                    limit == null ? "<default>" : limit,
+                    cursor != null,
+                    items.size(),
+                    page.nextCursor() != null,
+                    ToolLogging.elapsedMillis(startedNanos));
             return CallToolResult.builder().structuredContent(output).build();
+        } catch (InvalidCursorException exception) {
+            LOGGER.debug(
+                    "find_recipes_by_output outputItemId={} limit={} cursorPresent={} failed reason={} durationMs={}",
+                    outputItemId,
+                    limit == null ? "<default>" : limit,
+                    cursor != null,
+                    exception.reason(),
+                    ToolLogging.elapsedMillis(startedNanos));
+            return ToolResults.failure(exception);
         } catch (Exception exception) {
+            LOGGER.error(
+                    "find_recipes_by_output outputItemId={} limit={} cursorPresent={} failed durationMs={}",
+                    outputItemId,
+                    limit == null ? "<default>" : limit,
+                    cursor != null,
+                    ToolLogging.elapsedMillis(startedNanos),
+                    exception);
             return ToolResults.failure(exception);
         }
     }

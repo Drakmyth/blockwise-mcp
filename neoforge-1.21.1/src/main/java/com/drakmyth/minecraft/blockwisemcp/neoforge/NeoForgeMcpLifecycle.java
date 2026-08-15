@@ -53,6 +53,7 @@ public final class NeoForgeMcpLifecycle {
     public void tagsUpdated(TagsUpdatedEvent event) {
         if (recipeSource != null && event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD) {
             recipeSource.advanceGeneration();
+            logger.info("Blockwise recipe cursors invalidated after server-data reload");
         }
     }
 
@@ -64,8 +65,10 @@ public final class NeoForgeMcpLifecycle {
         recipeService = null;
         recipeSource = null;
         if (mcpServer != null) {
+            logger.info("Blockwise MCP endpoint stopping");
             try {
                 mcpServer.close();
+                logger.info("Blockwise MCP endpoint stopped");
             } catch (RuntimeException exception) {
                 logger.error("Blockwise MCP endpoint failed to stop cleanly", exception);
             } finally {
