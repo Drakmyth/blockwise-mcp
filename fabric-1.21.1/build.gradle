@@ -9,6 +9,12 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
     implementation project(':core')
     implementation project(':mcp-server')
+    include project(':core')
+    include project(':mcp-server')
+
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 base {
@@ -25,6 +31,10 @@ var replaceProperties = [
         fabric_loader_version: fabric_loader_version,
         fabric_api_version: fabric_api_version,
 ]
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
 
 processResources {
     inputs.properties replaceProperties
