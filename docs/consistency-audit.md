@@ -31,13 +31,9 @@ compatibility/
 
 ### Naming and packages
 
-- Entrypoints are named `BlockwiseFabric` and `Blockwise`; neither follows the accepted loader-prefix convention.
-- Both loaders define an unqualified `MinecraftServerToolExecutor`.
-- NeoForge configuration is `BlockwiseConfig`, while Fabric configuration is `FabricConfig`.
-- GameTest classes are `BlockwiseFabricGameTests` and `BlockwiseGameTests`.
-- NeoForge's entrypoint and GameTests sit outside its loader package; Fabric loader-owned code is consistently under its loader package.
-
-Target names are `FabricBlockwiseMcp`, `NeoForgeBlockwiseMcp`, `FabricMinecraftServerToolExecutor`, `NeoForgeMinecraftServerToolExecutor`, `FabricConfig`, `NeoForgeConfig`, `FabricBlockwiseGameTests`, and `NeoForgeBlockwiseGameTests`.
+- Loader-owned classes use the accepted `Fabric` or `NeoForge` prefix consistently.
+- Entrypoints, executors, configuration, lifecycle adapters, runtime sources, and GameTests are all distinguished without relying on package context.
+- All loader-owned classes reside beneath their loader package.
 
 ### Implementation patterns
 
@@ -57,10 +53,8 @@ Target names are `FabricBlockwiseMcp`, `NeoForgeBlockwiseMcp`, `FabricMinecraftS
 
 ## Proposed delivery
 
-1. Move modules to the accepted directory layout and update paths only.
-2. Rename loader-owned classes and normalize packages without behavioral changes.
-3. Upgrade Gradle to 9.7.0, Loom to 1.17.19, and ModDevGradle to 2.0.144; centralize plugin versions.
-4. Investigate and, if viable, isolate NeoForge GameTests from the production artifact and close configuration-test gaps.
-5. Build the cross-loader conformance suite on the normalized structure.
+1. Upgrade Gradle to 9.7.0, Loom to 1.17.19, and ModDevGradle to 2.0.144; centralize plugin versions.
+2. Investigate and, if viable, isolate NeoForge GameTests from the production artifact and close configuration-test gaps.
+3. Build the cross-loader conformance suite on the normalized structure.
 
 Each implementation PR must pass unit tests, loader development tests, production artifact inspection, and all four minimum/recent packaged compatibility checks.

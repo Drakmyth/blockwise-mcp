@@ -10,11 +10,11 @@ import java.util.concurrent.TimeUnit;
 import net.minecraft.server.MinecraftServer;
 
 /** Executes MCP tool operations on the authoritative Minecraft server thread. */
-public final class MinecraftServerToolExecutor implements McpToolExecutor {
+public final class NeoForgeMinecraftServerToolExecutor implements McpToolExecutor {
     private final MinecraftServer server;
     private final Duration timeout;
 
-    public MinecraftServerToolExecutor(MinecraftServer server, Duration timeout) {
+    public NeoForgeMinecraftServerToolExecutor(MinecraftServer server, Duration timeout) {
         this.server = Objects.requireNonNull(server, "server");
         this.timeout = Objects.requireNonNull(timeout, "timeout");
     }

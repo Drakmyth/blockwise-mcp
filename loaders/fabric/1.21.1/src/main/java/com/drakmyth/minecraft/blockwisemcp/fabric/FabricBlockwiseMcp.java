@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Registers Blockwise MCP with the Fabric runtime. */
-public final class BlockwiseFabric implements ModInitializer {
+public final class FabricBlockwiseMcp implements ModInitializer {
     public static final String MOD_ID = "blockwisemcp";
     private static final Logger LOGGER = LoggerFactory.getLogger("Blockwise MCP");
     private static FabricMcpLifecycle lifecycle;

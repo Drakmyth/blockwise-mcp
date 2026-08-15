@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.drakmyth.minecraft.blockwisemcp.fabric.BlockwiseFabric"
+      "com.drakmyth.minecraft.blockwisemcp.fabric.FabricBlockwiseMcp"
     ]
   },
   "accessWidener": "blockwisemcp.accesswidener",
