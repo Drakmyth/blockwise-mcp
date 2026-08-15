@@ -56,7 +56,7 @@ jobs:
                   cache-read-only: ${{ github.event.pull_request.head.repo.fork }}
 
             - name: Build against minimum NeoForge
-              run: ./gradlew :core:build :mcp-server:build :neoforge-1.21.1:build
+              run: ./gradlew :core:build :mcp-server:build :fabric-1.21.1:build :neoforge-1.21.1:build
 
             - name: Upload distributable mod
               uses: actions/upload-artifact@v7
