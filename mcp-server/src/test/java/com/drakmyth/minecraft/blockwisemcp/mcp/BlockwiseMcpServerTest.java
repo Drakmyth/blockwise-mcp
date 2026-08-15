@@ -147,7 +147,9 @@ class BlockwiseMcpServerTest {
             var failed = client.callTool(CallToolRequest.builder("list_loaded_mods").arguments(Map.of()).build());
             assertTrue(failed.isError());
             assertEquals(null, failed.structuredContent());
-            assertEquals("Loaded mod source failed", ((TextContent) failed.content().getFirst()).text());
+            assertEquals(
+                    "INTERNAL_ERROR: Blockwise MCP could not complete the request. Do not retry unchanged; consult the server logs or report the failure.",
+                    ((TextContent) failed.content().getFirst()).text());
         }
     }
 
@@ -181,7 +183,9 @@ class BlockwiseMcpServerTest {
                     .build());
             assertTrue(stale.isError());
             assertEquals(null, stale.structuredContent());
-            assertEquals("Cursor is stale", ((TextContent) stale.content().getFirst()).text());
+            assertEquals(
+                    "CURSOR_STALE: Runtime data changed after the cursor was issued. Repeat the same query without a cursor.",
+                    ((TextContent) stale.content().getFirst()).text());
         }
     }
 
