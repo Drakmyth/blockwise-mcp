@@ -117,9 +117,9 @@ jobs:
               shell: bash
               run: |
                   if [[ "${{ matrix.target }}" == "minimum" ]]; then
-                      property=neo_version
+                      property=neoforge_version
                   else
-                      property=neo_latest_version
+                      property=neoforge_latest_version
                   fi
                   version=$(grep "^$property=" gradle.properties | cut -d= -f2-)
                   mod_jar=$(find compatibility-artifact -name '*.jar' -type f -print -quit)
@@ -145,7 +145,7 @@ jobs:
               run: |
                   set -o pipefail
                   ./gradlew :compatibility:neoforge:runGameTestServer \
-                      -Pneo_test_version=${{ steps.compatibility.outputs.neoforge_version }} \
+                      -Pneoforge_test_version=${{ steps.compatibility.outputs.neoforge_version }} \
                       -Pblockwise_mod_jar=${{ steps.compatibility.outputs.mod_jar }} \
                       | tee gametest.log
                   grep -E 'All [1-9][0-9]* required tests passed :\)' gametest.log

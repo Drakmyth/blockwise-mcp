@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'net.neoforged.moddev' version "${moddev_version}"
+    id 'net.neoforged.moddev' version "${neoforge_moddev_version}"
 }
 
 var blockwiseModJar = providers.gradleProperty('blockwise_mod_jar')
@@ -12,7 +12,7 @@ dependencies {
 }
 
 neoForge {
-    version = project.findProperty('neo_test_version') ?: project.neo_version
+    version = project.findProperty('neoforge_test_version') ?: project.neoforge_version
 
     runs {
         gameTestServer {
