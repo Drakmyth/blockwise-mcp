@@ -38,6 +38,7 @@ Provide AI clients with structured access to authoritative data from a running m
 - Expose focused tools rather than a generic query language.
 - The planned initial tools are `list_loaded_mods` and `find_recipes_by_output`.
 - Successful tool responses use structured content without a redundant prose summary.
+- Runtime tool failures use `isError: true` with text content and no structured content, which remains reserved for the success output schema.
 - Do not encode contract versions in tool names.
 - Before 1.0, documented schemas may change incompatibly. From 1.0 onward, removals and semantic changes require a major schema version.
 - Describe every published input and output property in its JSON Schema.

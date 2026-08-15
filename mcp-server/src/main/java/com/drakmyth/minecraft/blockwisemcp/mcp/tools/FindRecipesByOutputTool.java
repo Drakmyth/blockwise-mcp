@@ -71,10 +71,7 @@ public final class FindRecipesByOutputTool {
             output.put("nextCursor", page.nextCursor());
             return CallToolResult.builder().structuredContent(output).build();
         } catch (Exception exception) {
-            return CallToolResult.builder().isError(true).structuredContent(Map.of(
-                    "code", "TOOL_EXECUTION_FAILED",
-                    "message", exception.getMessage() == null ? "Tool execution failed" : exception.getMessage()))
-                    .build();
+            return ToolResults.failure(exception);
         }
     }
 
