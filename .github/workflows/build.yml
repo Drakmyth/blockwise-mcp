@@ -56,13 +56,13 @@ jobs:
                   cache-read-only: ${{ github.event.pull_request.head.repo.fork }}
 
             - name: Build against minimum NeoForge
-              run: ./gradlew :core:build :mcp-server:build :fabric-1.21.1:build :neoforge-1.21.1:build
+              run: ./gradlew :core:build :mcp-server:build :loaders:fabric:1.21.1:build :loaders:neoforge:1.21.1:build
 
             - name: Upload NeoForge mod
               uses: actions/upload-artifact@v7
               with:
                   name: blockwise-neoforge-mod
-                  path: neoforge-1.21.1/build/libs/*.jar
+                  path: loaders/neoforge/1.21.1/build/libs/*.jar
                   if-no-files-found: error
                   overwrite: true
 
@@ -71,8 +71,8 @@ jobs:
               with:
                   name: blockwise-fabric-mod
                   path: |
-                      fabric-1.21.1/build/libs/*.jar
-                      !fabric-1.21.1/build/libs/*-gametest*.jar
+                      loaders/fabric/1.21.1/build/libs/*.jar
+                      !loaders/fabric/1.21.1/build/libs/*-gametest*.jar
                   if-no-files-found: error
                   overwrite: true
 
@@ -80,7 +80,7 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   name: blockwise-fabric-gametest
-                  path: fabric-1.21.1/build/libs/*-gametest.jar
+                  path: loaders/fabric/1.21.1/build/libs/*-gametest.jar
                   if-no-files-found: error
                   overwrite: true
 
@@ -144,7 +144,7 @@ jobs:
               shell: bash
               run: |
                   set -o pipefail
-                  ./gradlew :neoforge-compatibility-test:runGameTestServer \
+                  ./gradlew :compatibility:neoforge:runGameTestServer \
                       -Pneo_test_version=${{ steps.compatibility.outputs.neoforge_version }} \
                       -Pblockwise_mod_jar=${{ steps.compatibility.outputs.mod_jar }} \
                       | tee gametest.log
@@ -222,7 +222,7 @@ jobs:
               shell: bash
               run: |
                   set -o pipefail
-                  timeout 180s ./gradlew :fabric-compatibility-test:runGameTestServer \
+                  timeout 180s ./gradlew :compatibility:fabric:runGameTestServer \
                       -Pfabric_test_loader_version=${{ steps.compatibility.outputs.loader_version }} \
                       -Pfabric_test_api_version=${{ steps.compatibility.outputs.api_version }} \
                       -Pblockwise_mod_jar=${{ steps.compatibility.outputs.mod_jar }} \
