@@ -18,6 +18,9 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 - In-game MCP configuration and manual retry of failed MCP startup
 - Custom/modded recipe types
 - Dynamic recipes (e.g. dyes, potions, armor trim)
+- Model-facing MCP instructions covering scope, tool relationships, filtering, pagination, and known omissions
+- Stable error taxonomy and retry guidance
+- Cross-loader conformance suite
 - `get_item`: retrieve one item by exact ID
 - `list_items`: list items with strictly narrowing AND filters
 - `get_block`: retrieve one block by exact ID
