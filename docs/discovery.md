@@ -20,6 +20,9 @@ Provide AI clients with structured access to authoritative data from a running m
 ### Architecture and lifecycle
 
 - Keep the root build loader-neutral.
+- Organize production adapters under `loaders/<loader>/<minecraft-version>` and packaged compatibility harnesses under `compatibility/<loader>`.
+- Prefix equivalent loader-owned classes with `Fabric` or `NeoForge`, even when their loader package already provides that context.
+- Preserve minimum and recent packaged compatibility checks for both loaders in every intermediate structural, consistency, and toolchain PR.
 - `core` owns Minecraft-independent contracts and services.
 - `mcp-server` owns loader-independent MCP transport and tool mapping.
 - Loader modules compose runtime sources, threading, configuration, and endpoint lifecycle.
