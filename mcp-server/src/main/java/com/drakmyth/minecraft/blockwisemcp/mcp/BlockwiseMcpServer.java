@@ -23,6 +23,9 @@ import org.apache.catalina.webresources.TomcatURLStreamHandlerFactory;
 public final class BlockwiseMcpServer implements AutoCloseable {
     public static final String HOST = "127.0.0.1";
     public static final String ENDPOINT = "/mcp";
+    static final String INSTRUCTIONS = """
+            Blockwise MCP queries authoritative data from the active Minecraft runtime. Use exact namespaced resource IDs when known. Multiple filters narrow results using AND semantics. Pagination cursors are opaque and must be reused with the same query; if a cursor becomes stale, restart without it. Blockwise MCP returns only behavior it can represent faithfully, so empty results may not account for unsupported mod-specific or runtime-dependent behavior.
+            """.strip();
 
     private final HttpServletStreamableServerTransportProvider transport;
     private final McpSyncServer mcpServer;
@@ -69,6 +72,7 @@ public final class BlockwiseMcpServer implements AutoCloseable {
                 .toList();
         var mcpServer = McpServer.sync(transport)
                 .serverInfo("blockwise-mcp", version)
+                .instructions(INSTRUCTIONS)
                 .capabilities(ServerCapabilities.builder().tools(false).build())
                 .jsonMapper(jsonMapper)
                 .jsonSchemaValidator(new ModuleCompatibleJsonSchemaValidator())

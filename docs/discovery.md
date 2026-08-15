@@ -32,6 +32,7 @@ Provide AI clients with structured access to authoritative data from a running m
 - Initial configuration contains `enabled`, `port`, and `dispatchTimeoutSeconds`.
 - Preserve SDK JSON Schema validation under NeoForge by repackaging networknt schema resources beneath a module-visible package and redirecting scoped resource lookup.
 - Keep `McpToolDefinition` as the project-owned SDK registration boundary until more tools justify a richer abstraction.
+- Publish concise initialization instructions for durable cross-tool guidance rather than duplicating the tool catalog; describe unsupported coverage broadly while feature development remains active.
 - Log lifecycle transitions and successful recipe invalidation at `INFO`, normal tool summaries at `DEBUG`, and unexpected tool failures at `ERROR` with stack traces.
 - Tool summaries explicitly select safe fields: include item IDs, limits, truncated and escaped filters, result counts, and duration; record only cursor presence, never cursor contents.
 
