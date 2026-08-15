@@ -107,6 +107,15 @@ Provide AI clients with structured access to authoritative data from a running m
 - Skip expensive CI work when every changed file is Markdown or under `docs/`.
 - Allow trusted same-repository pull requests to write Gradle caches; keep fork pull requests read-only.
 
+### Cross-loader conformance
+
+- Exercise the real Streamable HTTP MCP endpoint from a shared client running inside each packaged GameTest server JVM.
+- Communicate with Blockwise only through HTTP/MCP; do not compare loader implementation classes.
+- Use deterministic loader/version-specific fixtures and a shared expected manifest.
+- Cover the complete current public contract, with success and failure scenarios in separate GameTests.
+- Share protocol assertions while retaining loader-specific GameTest registration, fixture resources, reload triggering, and launch configuration.
+- See [cross-loader conformance plan](conformance-plan.md) for the contract matrix and delivery slices.
+
 ### Future platforms
 
 - Forge and Quilt are intended future production targets.
