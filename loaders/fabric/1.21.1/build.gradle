@@ -65,7 +65,18 @@ tasks.named('assemble') {
     dependsOn remapGametestJar
 }
 
+var generateGameTestServerProperties = tasks.register('generateGameTestServerProperties') {
+    var outputFile = layout.buildDirectory.file('run/gameTest/server.properties')
+    outputs.file outputFile
+
+    doLast {
+        outputFile.get().asFile.parentFile.mkdirs()
+        outputFile.get().asFile.text = 'online-mode=false\n'
+    }
+}
+
 tasks.named('runGameTest') {
+    dependsOn generateGameTestServerProperties
     jvmArgs "-Dblockwise.test.expectedVersion=${project.version}"
 }
 

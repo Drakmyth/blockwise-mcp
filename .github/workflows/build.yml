@@ -55,7 +55,7 @@ jobs:
               with:
                   cache-read-only: ${{ github.event.pull_request.head.repo.fork }}
 
-            - name: Build against minimum NeoForge
+            - name: Build all modules against minimum loader stacks
               run: ./gradlew :core:build :mcp-server:build :loaders:fabric:1.21.1:build :loaders:neoforge:1.21.1:build
 
             - name: Upload NeoForge mod
