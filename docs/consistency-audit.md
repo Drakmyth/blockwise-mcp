@@ -42,6 +42,7 @@ compatibility/
 - Both loaders isolate GameTests and test resources in separate test-only mods while packaged validation exercises the exact production JAR beside them.
 - Both loader configurations have focused unit coverage for defaults and accepted ranges.
 - Compatibility harnesses intentionally differ: Fabric launches Loader's production server directly, while NeoForge uses ModDevGradle with the packaged JAR as an external runtime mod. Their contracts and naming can align even when implementation cannot.
+- Shared contract testing exercises the real MCP endpoint, deterministic recipes, schemas, pagination, errors, and reload invalidation on all four packaged runtime targets.
 
 ## Risks
 
@@ -49,9 +50,5 @@ compatibility/
 - Directory moves affect Gradle paths, CI filters, artifact paths, README commands, and ignore rules.
 - A separate NeoForge GameTest mod may require loader-specific metadata or ModDevGradle capabilities not yet proven.
 - Toolchain upgrades may alter remapping, nested dependency packaging, configuration-cache behavior, or GameTest task wiring.
-
-## Proposed delivery
-
-1. Build the cross-loader contract testing suite on the normalized structure.
 
 Each implementation PR must pass unit tests, loader development tests, production artifact inspection, and all four minimum/recent packaged compatibility checks.

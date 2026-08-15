@@ -5,6 +5,7 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator.ValidationResponse;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
+import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import java.time.Duration;
@@ -121,6 +122,125 @@ public final class McpContractTests {
             }
             requireEquals(expectedItems, paged, "paginated recipe fixtures");
         }
+    }
+
+    /** Verifies argument, malformed-cursor, unsupported-cursor, and query-mismatch failures. */
+    public static void verifyFailures() {
+        var transport = HttpClientStreamableHttpTransport.builder(BASE_URL)
+                .endpoint(ENDPOINT)
+                .connectTimeout(TIMEOUT)
+                .build();
+        try (var client = McpClient.sync(transport)
+                .initializationTimeout(TIMEOUT)
+                .requestTimeout(TIMEOUT)
+                .jsonSchemaValidator((schema, value) -> ValidationResponse.asValid(""))
+                .build()) {
+            client.initialize();
+            assertFailure(
+                    client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                            .arguments(Map.of("outputItemId", "minecraft:debug_stick", "cursor", "!"))
+                            .build()),
+                    "CURSOR_MALFORMED");
+
+            var cursor = recipeCursor(client);
+            assertFailure(
+                    client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                            .arguments(Map.of(
+                                    "outputItemId", "minecraft:debug_stick",
+                                    "limit", 1,
+                                    "cursor", unsupportedCursor(cursor)))
+                            .build()),
+                    "CURSOR_FORMAT_UNSUPPORTED");
+            assertFailure(
+                    client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                            .arguments(Map.of(
+                                    "outputItemId", "minecraft:barrier",
+                                    "limit", 1,
+                                    "cursor", cursor))
+                            .build()),
+                    "CURSOR_QUERY_MISMATCH");
+            assertInvalidArguments(client.callTool(CallToolRequest.builder("list_loaded_mods")
+                    .arguments(Map.of("limit", "many"))
+                    .build()));
+        }
+    }
+
+    /** Returns a valid recipe cursor for a subsequent reload-invalidation assertion. */
+    public static String createRecipeCursor() {
+        var transport = HttpClientStreamableHttpTransport.builder(BASE_URL)
+                .endpoint(ENDPOINT)
+                .connectTimeout(TIMEOUT)
+                .build();
+        try (var client = McpClient.sync(transport)
+                .initializationTimeout(TIMEOUT)
+                .requestTimeout(TIMEOUT)
+                .jsonSchemaValidator((schema, value) -> ValidationResponse.asValid(""))
+                .build()) {
+            client.initialize();
+            return recipeCursor(client);
+        }
+    }
+
+    /** Verifies that a cursor issued before a successful reload is stale. */
+    public static void verifyStaleCursor(String cursor) {
+        var transport = HttpClientStreamableHttpTransport.builder(BASE_URL)
+                .endpoint(ENDPOINT)
+                .connectTimeout(TIMEOUT)
+                .build();
+        try (var client = McpClient.sync(transport)
+                .initializationTimeout(TIMEOUT)
+                .requestTimeout(TIMEOUT)
+                .jsonSchemaValidator((schema, value) -> ValidationResponse.asValid(""))
+                .build()) {
+            client.initialize();
+            assertFailure(
+                    client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                            .arguments(Map.of(
+                                    "outputItemId", "minecraft:debug_stick",
+                                    "limit", 1,
+                                    "cursor", cursor))
+                            .build()),
+                    "CURSOR_STALE");
+        }
+    }
+
+    private static String recipeCursor(io.modelcontextprotocol.client.McpSyncClient client) {
+        var first = client.callTool(CallToolRequest.builder("find_recipes_by_output")
+                .arguments(Map.of("outputItemId", "minecraft:debug_stick", "limit", 1))
+                .build());
+        require(!Boolean.TRUE.equals(first.isError()), "recipe cursor call must succeed");
+        var cursor = map(first.structuredContent(), "recipe cursor output").get("nextCursor");
+        require(cursor instanceof String, "recipe cursor must be present");
+        return (String) cursor;
+    }
+
+    private static String unsupportedCursor(String cursor) {
+        var bytes = java.util.Base64.getUrlDecoder().decode(cursor);
+        bytes[0] = 0;
+        bytes[1] = 0;
+        bytes[2] = 0;
+        bytes[3] = 2;
+        return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    private static void assertInvalidArguments(CallToolResult result) {
+        require(Boolean.TRUE.equals(result.isError()), "invalid arguments must produce a tool error");
+        requireEquals(null, result.structuredContent(), "invalid-argument structured content");
+        requireEquals(1, result.content().size(), "invalid-argument content count");
+        require(result.content().getFirst() instanceof TextContent, "invalid-argument content must be text");
+        var text = ((TextContent) result.content().getFirst()).text();
+        require(
+                text.startsWith("Tool (list_loaded_mods) input validation failed:"),
+                "invalid-argument validation text: " + text);
+    }
+
+    private static void assertFailure(CallToolResult result, String code) {
+        require(Boolean.TRUE.equals(result.isError()), code + " result must be an error");
+        requireEquals(null, result.structuredContent(), code + " structured content");
+        requireEquals(1, result.content().size(), code + " content count");
+        require(result.content().getFirst() instanceof TextContent, code + " content must be text");
+        var text = ((TextContent) result.content().getFirst()).text();
+        require(text.startsWith(code + ":"), code + " text prefix: " + text);
     }
 
     // Keep expected MCP output independent from recipe JSON inputs so fixture or mapping drift fails visibly.
