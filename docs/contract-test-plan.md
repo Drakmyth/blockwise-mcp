@@ -1,8 +1,8 @@
-# Cross-loader conformance plan
+# Cross-loader contract testing plan
 
 ## Objective
 
-Prove that packaged Fabric and NeoForge 1.21.1 artifacts expose the same public Blockwise MCP behavior. Conformance uses the real `/mcp` endpoint and deterministic fixtures; it does not compare loader implementation classes.
+Prove that packaged Fabric and NeoForge 1.21.1 artifacts expose the same public Blockwise MCP behavior. Contract testing uses the real `/mcp` endpoint and deterministic fixtures; it does not compare loader implementation classes.
 
 ## Accepted decisions
 
@@ -15,7 +15,7 @@ Prove that packaged Fabric and NeoForge 1.21.1 artifacts expose the same public 
 
 ## Structure
 
-Add a Java 21 `conformance` module containing no Minecraft or loader dependencies. It owns:
+Add a Java 21 `contract-tests` module containing no Minecraft or loader dependencies. It owns:
 
 - bounded Streamable HTTP MCP client setup and teardown;
 - initialization, tool-list, and tool-call requests;
@@ -23,7 +23,7 @@ Add a Java 21 `conformance` module containing no Minecraft or loader dependencie
 - an expected-fixture manifest supplied by the loader test mod;
 - focused assertion methods for separate success and failure scenarios.
 
-Package the shared conformance classes into each GameTest artifact, not either production artifact. Reuse the MCP SDK classes already packaged with the production mod; do not embed a second SDK copy.
+Package the shared contract test classes into each GameTest artifact, not either production artifact. Reuse the MCP SDK classes already packaged with the production mod; do not embed a second SDK copy.
 
 Each loader's 1.21.1 GameTest source set owns:
 
@@ -32,7 +32,7 @@ Each loader's 1.21.1 GameTest source set owns:
 - thin GameTest methods invoking shared assertions;
 - the loader-specific asynchronous datapack reload trigger needed for cursor invalidation.
 
-Standardize the test mod ID as `blockwisemcp_gametest`. Loaded-mod assertions filter to Blockwise IDs so loader framework mod lists do not become conformance fixtures.
+Standardize the test mod ID as `blockwisemcp_gametest`. Loaded-mod assertions filter to Blockwise IDs so loader framework mod lists do not become contract test fixtures.
 
 ## Contract matrix
 
@@ -74,22 +74,22 @@ Standardize the test mod ID as `blockwisemcp_gametest`. Loaded-mod assertions fi
 
 Keep each PR buildable and preserve all four packaged runtime targets.
 
-1. Add the loader-neutral conformance module, shared MCP client, initialization/tool-schema assertions, and successful loaded-mod assertions.
+1. Add the loader-neutral contract test module, shared MCP client, initialization/tool-schema assertions, and successful loaded-mod assertions.
 2. Add equivalent recipe fixtures and successful recipe filtering, ordering, schema, and pagination assertions.
-3. Add cursor/error scenarios and loader-specific reload invalidation, then remove the delivered conformance roadmap entry.
+3. Add cursor/error scenarios and loader-specific reload invalidation, then remove the delivered contract testing roadmap entry.
 
 The suite is not considered delivered until all three slices run against minimum and recent packaged Fabric and NeoForge stacks.
 
 ## CI
 
-Reuse the existing packaged compatibility jobs. Their separate GameTest artifacts gain the shared conformance classes and fixtures, so every required minimum/recent check executes the same assertions. Do not add a second source-built conformance path that could pass while distributable artifacts fail.
+Reuse the existing packaged compatibility jobs. Their separate GameTest artifacts gain the shared contract test classes and fixtures, so every required minimum/recent check executes the same assertions. Do not add a second source-built contract testing path that could pass while distributable artifacts fail.
 
 Report the number of required GameTests as the existing jobs do. A future CI split may separate loader jobs for log isolation, but it is not required by this architecture.
 
 ## Risks
 
 - An in-JVM client does not prove cross-process connectivity, although it exercises the real socket, HTTP transport, MCP SDK, schemas, and serialization.
-- MCP client dependencies may conflict with packaged server dependencies. Compile against the exact server SDK version and package only conformance-owned classes.
+- MCP client dependencies may conflict with packaged server dependencies. Compile against the exact server SDK version and package only contract-test-owned classes.
 - Datapack reload completion must not block the Minecraft server thread. Loader tests need asynchronous continuation with an overall timeout.
 - Exact schema comparison can flag compatible SDK formatting changes. Canonicalize JSON object ordering but preserve semantic fields and array ordering.
 - GameTest count and runtime will increase. Keep assertions grouped by contract scenario rather than creating one server launch per assertion.

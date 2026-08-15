@@ -107,21 +107,21 @@ Provide AI clients with structured access to authoritative data from a running m
 - Skip expensive CI work when every changed file is Markdown or under `docs/`.
 - Allow trusted same-repository pull requests to write Gradle caches; keep fork pull requests read-only.
 
-### Cross-loader conformance
+### Cross-loader contract testing
 
 - Exercise the real Streamable HTTP MCP endpoint from a shared client running inside each packaged GameTest server JVM.
 - Communicate with Blockwise only through HTTP/MCP; do not compare loader implementation classes.
 - Use deterministic loader/version-specific fixtures and a shared expected manifest.
 - Cover the complete current public contract, with success and failure scenarios in separate GameTests.
 - Share protocol assertions while retaining loader-specific GameTest registration, fixture resources, reload triggering, and launch configuration.
-- See [cross-loader conformance plan](conformance-plan.md) for the contract matrix and delivery slices.
+- See [cross-loader contract testing plan](contract-test-plan.md) for the contract matrix and delivery slices.
 
 ### Future platforms
 
 - Forge and Quilt are intended future production targets.
 - Target Minecraft 26.1.2 as the next version after 1.21.1 rather than adding an incremental 1.21.x version without demonstrated demand.
 - Preview and beta dependencies may inform planning, but production implementation requires a reviewed production-ready stack.
-- Build externally observable conformance for the current Fabric and NeoForge implementations before adding another loader or Minecraft version.
+- Build externally observable contract tests for the current Fabric and NeoForge implementations before adding another loader or Minecraft version.
 - Keep shared modules on their oldest required Java target; Minecraft 26.1.2 loader and compatibility modules require Java 25.
 - See [future platform reconnaissance](future-platform-reconnaissance.md) for availability evidence and risks.
 

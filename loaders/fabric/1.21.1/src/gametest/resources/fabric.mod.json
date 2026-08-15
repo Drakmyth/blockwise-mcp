@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "blockwisemcp-gametest",
-  "version": "1.0.0",
+  "id": "blockwisemcp_gametest",
+  "version": "${mod_version}",
   "name": "Blockwise MCP GameTest",
   "environment": "*",
   "entrypoints": {

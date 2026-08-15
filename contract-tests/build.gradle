@@ -1,0 +1,7 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    compileOnly 'io.modelcontextprotocol.sdk:mcp-core:2.0.0'
+}
