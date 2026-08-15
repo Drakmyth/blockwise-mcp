@@ -72,7 +72,7 @@ jobs:
                   name: blockwise-fabric-mod
                   path: |
                       loaders/fabric/1.21.1/build/libs/blockwisemcp-*-fabric.jar
-                      !loaders/fabric/1.21.1/build/libs/blockwisemcp-gametest-*.jar
+                      !loaders/fabric/1.21.1/build/libs/blockwisemcp-gametest-*-fabric.jar
                   if-no-files-found: error
                   overwrite: true
 
