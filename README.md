@@ -40,4 +40,4 @@ Build the production mod JAR:
 
 The distributable JAR is written under `neoforge-1.21.1/build/libs/`.
 
-See [project discovery](docs/discovery.md) for accepted decisions, risks, open questions, and deferred scope.
+See [project discovery](docs/discovery.md) for accepted decisions and risks. Future work is prioritized in the [project roadmap](docs/roadmap.md).

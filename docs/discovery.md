@@ -37,7 +37,9 @@ Provide AI clients with structured access to authoritative data from a running m
 
 ### Tool contracts
 
+- Optimize tool selection and output for players asking how to play and understand the active modpack; mod and pack developer diagnostics are not the current target audience.
 - Expose focused tools rather than a generic query language.
+- Default resource tooling to an exact `get_<resource>` operation and a paginated `list_<resources>` operation whose optional filters combine with strictly narrowing AND semantics; reserve `search` for fuzzy or relevance-based discovery, and allow exceptions when cardinality, output shape, cost, or semantics differ materially.
 - The planned initial tools are `list_loaded_mods` and `find_recipes_by_output`.
 - Successful tool responses use structured content without a redundant prose summary.
 - Runtime tool failures use `isError: true` with text content and no structured content, which remains reserved for the success output schema.
@@ -107,7 +109,6 @@ Provide AI clients with structured access to authoritative data from a running m
 
 ## Open questions
 
-- Is `Blockwise MCP` sufficiently available and compliant with Minecraft branding guidance?
 - Which recipe operation should follow output lookup?
 - How should item variants with data components be queried?
 - How should type-specific recipe context, custom recipes, and dynamic recipes report semantics that cannot be represented faithfully?
