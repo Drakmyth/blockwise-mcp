@@ -1,5 +1,7 @@
 package com.drakmyth.minecraft.blockwisemcp.fabric;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
@@ -11,13 +13,7 @@ import java.time.Duration;
 record FabricConfig(boolean enabled, int port, int dispatchTimeoutSeconds) {
     static final int DEFAULT_PORT = 47831;
     static final int DEFAULT_DISPATCH_TIMEOUT_SECONDS = 5;
-    private static final String DEFAULT_JSON = """
-            {
-              "enabled": true,
-              "port": 47831,
-              "dispatchTimeoutSeconds": 5
-            }
-            """;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     static FabricConfig load(Path path) throws IOException {
         if (Files.notExists(path)) {
@@ -25,23 +21,23 @@ record FabricConfig(boolean enabled, int port, int dispatchTimeoutSeconds) {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            Files.writeString(path, DEFAULT_JSON);
+            Files.writeString(path, GSON.toJson(defaults()) + System.lineSeparator());
         }
 
         try (Reader reader = Files.newBufferedReader(path)) {
             JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+            var defaults = defaults();
             return new FabricConfig(
-                    booleanValue(json, "enabled", true),
-                    intValue(json, "port", DEFAULT_PORT, 1, 65535),
-                    intValue(
-                            json,
-                            "dispatchTimeoutSeconds",
-                            DEFAULT_DISPATCH_TIMEOUT_SECONDS,
-                            1,
-                            60));
+                    booleanValue(json, "enabled", defaults.enabled()),
+                    intValue(json, "port", defaults.port(), 1, 65535),
+                    intValue(json, "dispatchTimeoutSeconds", defaults.dispatchTimeoutSeconds(), 1, 60));
         } catch (RuntimeException exception) {
             throw new IllegalArgumentException("Invalid Blockwise MCP Fabric configuration: " + path, exception);
         }
+    }
+
+    static FabricConfig defaults() {
+        return new FabricConfig(true, DEFAULT_PORT, DEFAULT_DISPATCH_TIMEOUT_SECONDS);
     }
 
     static FabricConfig disabled() {
