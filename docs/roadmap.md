@@ -4,7 +4,7 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 
 ## Sooner
 
-1. Cross-loader conformance suite
+1. Cross-loader contract testing suite
 2. Dedicated-server and multiplayer lifecycle
 3. `get_item`: retrieve one item by exact ID
 4. `list_items`: list items with strictly narrowing AND filters

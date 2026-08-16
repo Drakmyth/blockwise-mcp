@@ -1,5 +1,6 @@
 package com.drakmyth.minecraft.blockwisemcp.neoforge.gametest;
 
+import com.drakmyth.minecraft.blockwisemcp.contracttests.McpContractTests;
 import com.drakmyth.minecraft.blockwisemcp.core.ids.ResourceId;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.IngredientOption;
 import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeDefinition;
@@ -7,6 +8,7 @@ import com.drakmyth.minecraft.blockwisemcp.core.recipes.RecipeInput;
 import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeBlockwiseMcp;
 import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeLoadedModSource;
 import com.drakmyth.minecraft.blockwisemcp.neoforge.NeoForgeRecipeSource;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -34,6 +36,22 @@ public final class NeoForgeBlockwiseGameTests {
         }
 
         helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 120000)
+    public static void testsMcpDiscoveryContract(GameTestHelper helper) {
+        var contractTest = CompletableFuture.runAsync(
+                () -> McpContractTests.verifyDiscovery(System.getProperty("blockwise.test.expectedVersion")),
+                command -> Thread.ofPlatform().name("blockwise-discovery-contract-test").start(command));
+        awaitContractTest(helper, contractTest);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 120000)
+    public static void testsLoadedModsContract(GameTestHelper helper) {
+        var contractTest = CompletableFuture.runAsync(
+                () -> McpContractTests.verifyLoadedMods(System.getProperty("blockwise.test.expectedVersion")),
+                command -> Thread.ofPlatform().name("blockwise-loaded-mods-contract-test").start(command));
+        awaitContractTest(helper, contractTest);
     }
 
     @GameTest(template = "empty")
@@ -94,6 +112,20 @@ public final class NeoForgeBlockwiseGameTests {
                 System.getProperty("blockwise.test.expectedVersion"),
                 "version");
         helper.succeed();
+    }
+
+    private static void awaitContractTest(GameTestHelper helper, CompletableFuture<Void> contractTest) {
+        if (!contractTest.isDone()) {
+            helper.runAfterDelay(1, () -> awaitContractTest(helper, contractTest));
+            return;
+        }
+        try {
+            contractTest.join();
+            helper.succeed();
+        } catch (RuntimeException exception) {
+            exception.getCause().printStackTrace();
+            helper.fail("MCP contract test failed: " + exception.getCause());
+        }
     }
 
     private static RecipeDefinition recipe(java.util.List<RecipeDefinition> recipes, String id) {

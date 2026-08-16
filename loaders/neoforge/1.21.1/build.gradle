@@ -15,6 +15,7 @@ dependencies {
 
     gametestImplementation sourceSets.main.output
     gametestImplementation project(':core')
+    gametestImplementation project(':contract-tests')
 
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -64,6 +65,7 @@ neoForge {
         }
         blockwisemcp_gametest {
             sourceSet sourceSets.gametest
+            sourceSet project(':contract-tests').sourceSets.main
         }
     }
 
@@ -106,6 +108,7 @@ tasks.named('processGametestResources') {
 
 var gametestJar = tasks.register('gametestJar', Jar) {
     from sourceSets.gametest.output
+    from project(':contract-tests').sourceSets.main.output
     archiveBaseName = "blockwisemcp-gametest-${minecraft_version}"
     archiveClassifier = 'neoforge'
 }

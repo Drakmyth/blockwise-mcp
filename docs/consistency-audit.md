@@ -52,6 +52,6 @@ compatibility/
 
 ## Proposed delivery
 
-1. Build the cross-loader conformance suite on the normalized structure.
+1. Build the cross-loader contract testing suite on the normalized structure.
 
 Each implementation PR must pass unit tests, loader development tests, production artifact inspection, and all four minimum/recent packaged compatibility checks.

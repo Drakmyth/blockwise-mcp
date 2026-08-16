@@ -7,7 +7,7 @@ Checked 2026-08-15. This is planning evidence, not a support claim.
 - Forge and Quilt are intended future production targets.
 - Minecraft 26.1.2 is the preferred next Minecraft version after 1.21.1.
 - Preview or beta dependencies may inform planning, but implementation requires a production-ready loader and toolchain stack.
-- Conformance must precede platform expansion and test observable behavior rather than shared adapter internals.
+- Contract testing must precede platform expansion and test observable behavior rather than shared adapter internals.
 
 ## Availability findings
 
@@ -48,9 +48,9 @@ The existing `loaders/<loader>/<minecraft-version>` layout remains appropriate. 
 - Each supported loader/version combination owns lifecycle wiring, config integration, ingredient introspection, reload signaling, test metadata, and runtime launch configuration.
 - Public artifact names continue to identify the loader they were built and validated for. Reusing a Fabric artifact on Quilt requires an explicit publication/support decision.
 
-## Conformance implications
+## Contract testing implications
 
-Build conformance before onboarding another platform. Its shared layer should assert only MCP-observable contracts:
+Build contract tests before onboarding another platform. Its shared layer should assert only MCP-observable contracts:
 
 - initialization instructions and tool schemas;
 - loaded-mod and recipe fixture results;
@@ -71,7 +71,7 @@ Keep launchers, GameTest registration, fixture resources, expected loader metada
 
 ## Recommended sequence
 
-1. Implement external, observable conformance for Fabric 1.21.1 and NeoForge 1.21.1.
+1. Implement external, observable contract tests for Fabric 1.21.1 and NeoForge 1.21.1.
 2. Prototype 26.1.2 build and packaged startup separately for Fabric and NeoForge; select production minimum/recent coordinates only after results are reviewed.
 3. Add 26.1.2 production modules while retaining Java 21 shared outputs.
 4. Validate the existing Fabric artifact on Quilt before deciding whether Quilt needs its own adapter or artifact.
