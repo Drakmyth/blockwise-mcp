@@ -34,6 +34,14 @@ public final class FabricBlockwiseGameTests implements FabricGameTest {
         awaitContractTest(helper, contractTest);
     }
 
+    @GameTest(template = FabricGameTest.EMPTY_STRUCTURE, timeoutTicks = 240000)
+    public void testsRecipeContractOverMcp(GameTestHelper helper) {
+        var contractTest = CompletableFuture.runAsync(
+                McpContractTests::verifyRecipes,
+                command -> Thread.ofPlatform().name("blockwise-recipe-contract-tests").start(command));
+        awaitContractTest(helper, contractTest);
+    }
+
     @GameTest(template = FabricGameTest.EMPTY_STRUCTURE)
     public void exposesSupportedRecipes(GameTestHelper helper) {
         var source = new FabricRecipeSource(helper.getLevel().getServer());

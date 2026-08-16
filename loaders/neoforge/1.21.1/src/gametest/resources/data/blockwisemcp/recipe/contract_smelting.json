@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": { "item": "minecraft:sand" },
+  "result": { "id": "minecraft:debug_stick", "count": 1 },
+  "experience": 0.0,
+  "cookingtime": 200
+}
