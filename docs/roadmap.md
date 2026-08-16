@@ -4,13 +4,12 @@ This roadmap tracks future work only. `Sooner` is ordered by relative priority; 
 
 ## Sooner
 
-1. Cross-loader contract testing suite
-2. Dedicated-server and multiplayer lifecycle
-3. `get_item`: retrieve one item by exact ID
-4. `list_items`: list items with strictly narrowing AND filters
-5. `get_recipe`: retrieve one recipe by exact ID
-6. `list_recipes`: list recipes with strictly narrowing AND filters
-7. Production-ready documentation and automated release generation
+1. Dedicated-server and multiplayer lifecycle
+2. `get_item`: retrieve one item by exact ID
+3. `list_items`: list items with strictly narrowing AND filters
+4. `get_recipe`: retrieve one recipe by exact ID
+5. `list_recipes`: list recipes with strictly narrowing AND filters
+6. Production-ready documentation and automated release generation
 
 ## Later
 

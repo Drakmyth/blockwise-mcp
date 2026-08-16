@@ -55,11 +55,27 @@ public final class NeoForgeBlockwiseGameTests {
     }
 
     @GameTest(template = "empty", timeoutTicks = 240000)
-    public static void testsRecipeContractOverMcp(GameTestHelper helper) {
+    public static void testsRecipeContract(GameTestHelper helper) {
         var contractTest = CompletableFuture.runAsync(
                 McpContractTests::verifyRecipes,
                 command -> Thread.ofPlatform().name("blockwise-recipe-contract-tests").start(command));
         awaitContractTest(helper, contractTest);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 240000)
+    public static void rejectsInvalidMcpRequests(GameTestHelper helper) {
+        var contractTest = CompletableFuture.runAsync(
+                McpContractTests::verifyFailures,
+                command -> Thread.ofPlatform().name("blockwise-failure-contract-tests").start(command));
+        awaitContractTest(helper, contractTest);
+    }
+
+    @GameTest(template = "empty", batch = "blockwiseReload", timeoutTicks = 360000)
+    public static void invalidatesMcpCursorAfterReload(GameTestHelper helper) {
+        var cursor = CompletableFuture.supplyAsync(
+                McpContractTests::createRecipeCursor,
+                command -> Thread.ofPlatform().name("blockwise-cursor-contract-tests").start(command));
+        awaitCursorAndReload(helper, cursor);
     }
 
     @GameTest(template = "empty")
@@ -120,6 +136,27 @@ public final class NeoForgeBlockwiseGameTests {
                 System.getProperty("blockwise.test.expectedVersion"),
                 "version");
         helper.succeed();
+    }
+
+    private static void awaitCursorAndReload(GameTestHelper helper, CompletableFuture<String> cursor) {
+        if (!cursor.isDone()) {
+            helper.runAfterDelay(1, () -> awaitCursorAndReload(helper, cursor));
+            return;
+        }
+        final String issuedCursor;
+        try {
+            issuedCursor = cursor.join();
+        } catch (RuntimeException exception) {
+            exception.getCause().printStackTrace();
+            helper.fail("MCP cursor setup failed: " + exception.getCause());
+            return;
+        }
+        var server = helper.getLevel().getServer();
+        var contractTest = server.reloadResources(server.getPackRepository().getSelectedIds())
+                .thenCompose(ignored -> CompletableFuture.runAsync(
+                        () -> McpContractTests.verifyStaleCursor(issuedCursor),
+                        command -> Thread.ofPlatform().name("blockwise-stale-cursor-contract-tests").start(command)));
+        awaitContractTest(helper, contractTest);
     }
 
     private static void awaitContractTest(GameTestHelper helper, CompletableFuture<Void> contractTest) {

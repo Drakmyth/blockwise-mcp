@@ -86,6 +86,10 @@ Reuse the existing packaged compatibility jobs. Their separate GameTest artifact
 
 Report the number of required GameTests as the existing jobs do. A future CI split may separate loader jobs for log isolation, but it is not required by this architecture.
 
+## Outcome
+
+The suite covers the complete initial matrix through the real MCP endpoint on minimum and recent packaged Fabric and NeoForge stacks. Shared Java 21 assertions are packaged only in test artifacts. Equivalent loader fixtures cover discovery, loaded mods, recipes, pagination, invalid arguments, all cursor error categories, and successful reload invalidation.
+
 ## Risks
 
 - An in-JVM client does not prove cross-process connectivity, although it exercises the real socket, HTTP transport, MCP SDK, schemas, and serialization.
